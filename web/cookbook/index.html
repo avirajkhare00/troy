@@ -5,6 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Troy Cookbook</title>
 <meta name="description" content="Verified recipes for Troy: persona bots, structured extraction, DPO preference tuning, local APIs, and shipping to Ollama — all trained on a MacBook.">
+<meta property="og:title" content="The Troy Cookbook — verified fine-tuning recipes">
+<meta property="og:description" content="Persona bots, JSON extractors, DPO and ORPO preference tuning, local APIs, Ollama export — every recipe verified on a MacBook.">
+<meta property="og:image" content="https://gettroy.app/assets/og.png">
+<meta property="og:url" content="https://gettroy.app/cookbook/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;600;700&display=swap">
 <link rel="stylesheet" href="../styles.css">
@@ -40,6 +46,7 @@
       <a href="#concise"><span class="mono">03</span> Style preference with DPO</a>
       <a href="#api"><span class="mono">04</span> Local OpenAI-compatible API</a>
       <a href="#ollama"><span class="mono">05</span> Ship to Ollama</a>
+      <a href="#orpo"><span class="mono">06</span> ORPO: lighter preference tuning</a>
     </nav>
   </div>
 </section>
@@ -206,7 +213,7 @@ a new signal. If the issue persists, try reseating the charger.</span></pre>
     <span class="mono">chosen</span> answer and a <span class="mono">rejected</span> one, and DPO moves
     the model toward your taste. Here: concise answers over rambling ones. Ten pairs, thirty
     iterations. Troy's DPO recovers the reference model by zeroing the LoRA scales &mdash;
-    no second copy of the weights in memory.</p>
+    no second copy of the weights in memory. (Also see <a href="#orpo">recipe 06</a>: ORPO uses the same data with no reference model at all.)</p>
 
     <div class="recipe-grid">
       <figure class="codecard">
@@ -326,7 +333,51 @@ Converting to GGUF format</span>
   </div>
 </section>
 
-<section class="section section-alt">
+<!-- ================= RECIPE 6 ================= -->
+<section class="section section-alt recipe" id="orpo">
+  <div class="wrap">
+    <p class="recipe-no mono">Recipe 06 · ORPO · <span class="verified">verified on M1 Pro, 16 GB</span></p>
+    <h2>Same preferences, no reference model: ORPO</h2>
+    <p class="section-lede">ORPO learns from the same <span class="mono">chosen</span>/<span class="mono">rejected</span>
+    pairs as DPO, but folds the preference signal into the SFT loss &mdash; so there is no reference
+    model in the math at all. On this machine that made it <strong>2.3&times; faster than DPO</strong>
+    (3.2 vs 1.4 it/s) with the same outcome. When you have preference pairs, try ORPO first;
+    reach for DPO when you specifically want to stay anchored to the base model's behavior.</p>
+
+    <div class="recipe-grid">
+      <figure class="codecard">
+        <figcaption class="codecard-title mono">troy.yaml &mdash; one line changed from recipe 03</figcaption>
+<pre class="mono"><code><span class="k">base:</span> mlx-community/Qwen3-0.6B-4bit
+<span class="k">task:</span> orpo
+
+<span class="k">data:</span>
+  <span class="k">train:</span> ./data/train.jsonl
+  <span class="k">format:</span> preference
+
+<span class="k">training:</span>
+  <span class="k">iters:</span> 30
+  <span class="k">lr:</span> 2e-5
+  <span class="k">lora:</span> { <span class="k">r:</span> 8, <span class="k">alpha:</span> 16 }
+  <span class="k">orpo:</span> { <span class="k">lambda:</span> 0.2 }
+
+<span class="k">output:</span> ./output</code></pre>
+      </figure>
+      <figure class="terminal recipe-term">
+        <figcaption class="term-bar"><span class="term-dot red"></span><span class="term-dot yellow"></span><span class="term-dot green"></span><span class="term-title mono">verify</span></figcaption>
+<pre class="term-body mono"><span class="t-cmd">$ troy train</span>
+<span class="t-dim">Training: task=orpo lambda=0.2 batch_size=2 iters=30
+Iter 20/30: loss 1.3744, reward acc 1.000, 3.17 it/s
+Iter 30/30: loss 0.6778, reward acc 1.000, 3.20 it/s</span>
+<span class="t-cmd">$ troy chat -p "What is RAM?"</span>
+<span class="t-ok">RAM stands for Random Access Memory.</span></pre>
+        <figcaption class="term-note">Same pairs as recipe 03; DPO ran 1.3&ndash;2.0 it/s on this data.
+        Both keep one copy of the weights in memory.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section class="section">
   <div class="wrap install-final">
     <h2>Bring a recipe, leave with a model.</h2>
     <code class="install-cmd mono" title="brew install avirajkhare00/troy/troy">brew install troy<button class="copy-btn" aria-label="Copy install command" onclick="copyInstall(this)">copy</button></code>
