@@ -18,7 +18,7 @@
       <a href="#workflow">Workflow</a>
       <a href="#config">Config</a>
       <a href="#silicon">Why a Mac</a>
-      <a class="head-install mono" href="#install">pipx install troy-cli</a>
+      <a class="head-install mono" href="#install">brew install troy</a>
     </nav>
   </div>
 </header>
@@ -34,10 +34,10 @@
       <p class="lede">Troy turns one YAML file into a LoRA training run on Apple Silicon.
       No CUDA, no cloud, no training pipeline &mdash; the model trains right there on your MacBook.</p>
       <div class="hero-actions">
-        <code class="install-cmd mono" id="install-cmd">pipx install troy-cli<button class="copy-btn" aria-label="Copy install command" onclick="copyInstall(this)">copy</button></code>
+        <code class="install-cmd mono" id="install-cmd">brew install troy<button class="copy-btn" aria-label="Copy install command" onclick="copyInstall(this)">copy</button></code>
         <a class="btn-ghost" href="#workflow">See the workflow</a>
       </div>
-      <p class="hero-fineprint">Open source, Apache-2.0. Requires an M1 or later.</p>
+      <p class="hero-fineprint">Via the <a href="https://github.com/avirajkhare00/troy-homebrew">Homebrew tap</a>. Open source, Apache-2.0. Requires an M1 or later.</p>
     </div>
 
     <figure class="terminal" aria-label="A real troy training session">
@@ -166,7 +166,7 @@ loss = dpo(policy_logps, ref_logps)</code></pre>
 <section class="section" id="install">
   <div class="wrap install-final">
     <h2>Your MacBook is the training rig.</h2>
-    <code class="install-cmd mono">pipx install troy-cli<button class="copy-btn" aria-label="Copy install command" onclick="copyInstall(this)">copy</button></code>
+    <code class="install-cmd mono" title="brew tap avirajkhare00/troy https://github.com/avirajkhare00/troy-homebrew && brew install troy">brew install troy<button class="copy-btn" aria-label="Copy install command" onclick="copyInstall(this)">copy</button></code>
     <p class="hero-fineprint">Then: <span class="mono">troy doctor</span> to see what this machine can do.</p>
   </div>
 </section>
@@ -182,7 +182,7 @@ loss = dpo(policy_logps, ref_logps)</code></pre>
 
 <script>
 function copyInstall(btn){
-  navigator.clipboard.writeText("pipx install troy-cli").then(function(){
+  navigator.clipboard.writeText("brew tap avirajkhare00/troy https://github.com/avirajkhare00/troy-homebrew && brew install troy").then(function(){
     btn.textContent = "copied";
     setTimeout(function(){ btn.textContent = "copy"; }, 1600);
   });

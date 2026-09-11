@@ -20,8 +20,9 @@ need a workstation GPU anywhere else.
 ## Install
 
 ```bash
-pipx install troy-cli
-# or: pip install troy-cli
+brew tap avirajkhare00/troy https://github.com/avirajkhare00/troy-homebrew
+brew install troy
+# or from source: pip install ./cli
 ```
 
 ## Quickstart

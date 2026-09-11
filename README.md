@@ -15,7 +15,8 @@ Built on [MLX](https://github.com/ml-explore/mlx) and
 ## Quickstart
 
 ```bash
-pipx install troy-cli   # requires an M1 or later, macOS 14+, Python 3.10–3.12
+brew tap avirajkhare00/troy https://github.com/avirajkhare00/troy-homebrew
+brew install troy   # requires an M1 or later
 
 troy doctor            # check your Mac: chip, memory, MLX, what you can train
 troy init              # create troy.yaml + sample data
