@@ -33,12 +33,64 @@
     Every recipe on this page was run end-to-end on a MacBook (M1&nbsp;Pro, 16&nbsp;GB)
     before it was written down; the outputs shown are real.</p>
     <nav class="recipe-index">
+      <a href="#base"><span class="mono">00</span> Choosing a base model</a>
       <a href="#persona"><span class="mono">01</span> Persona bot</a>
       <a href="#extract"><span class="mono">02</span> Structured extraction</a>
       <a href="#concise"><span class="mono">03</span> Style preference with DPO</a>
       <a href="#api"><span class="mono">04</span> Local OpenAI-compatible API</a>
       <a href="#ollama"><span class="mono">05</span> Ship to Ollama</a>
     </nav>
+  </div>
+</section>
+
+<!-- ================= CHOOSING A BASE ================= -->
+<section class="section section-alt recipe" id="base">
+  <div class="wrap">
+    <p class="recipe-no mono">Before you start · <span class="verified">three families verified on M1 Pro, 16 GB</span></p>
+    <h2>Choosing a base model</h2>
+    <p class="section-lede">The recipes below use Qwen3-0.6B because it trains in minutes on the
+    16&nbsp;GB machine they were verified on &mdash; not because Troy is tied to it.
+    <span class="mono">base:</span> accepts any model mlx-lm supports: Llama, Qwen, Mistral,
+    Gemma, Phi, SmolLM, DeepSeek, and the rest of the mainstream open families. Point it at a
+    pre-converted 4-bit repo from <a href="https://huggingface.co/mlx-community">mlx-community</a>
+    for the fastest start, an original Hugging Face repo, or a local path.</p>
+
+    <div class="recipe-grid">
+      <figure class="codecard">
+        <figcaption class="codecard-title mono">all of these are one-line swaps</figcaption>
+<pre class="mono"><code><span class="c"># small &amp; fast — great for iteration</span>
+<span class="k">base:</span> mlx-community/Qwen3-0.6B-4bit
+<span class="k">base:</span> mlx-community/SmolLM2-135M-Instruct
+
+<span class="c"># the sweet spot on 16 GB</span>
+<span class="k">base:</span> mlx-community/Llama-3.2-1B-Instruct-4bit
+<span class="k">base:</span> mlx-community/Qwen3-4B-4bit
+
+<span class="c"># with 24–64 GB of unified memory</span>
+<span class="k">base:</span> mlx-community/Llama-3.1-8B-Instruct-4bit
+<span class="k">base:</span> mlx-community/Qwen2.5-32B-Instruct-4bit</code></pre>
+      </figure>
+      <div>
+        <div class="table-scroll">
+          <table class="mem-table">
+            <thead><tr><th>Your Mac</th><th>Comfortable base (4-bit QLoRA)</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">8 GB</td><td>~1.5B</td></tr>
+              <tr><td class="mono">16 GB</td><td>~4B</td></tr>
+              <tr><td class="mono">24 GB</td><td>~8B</td></tr>
+              <tr><td class="mono">36 GB</td><td>~14B</td></tr>
+              <tr><td class="mono">64 GB</td><td>~32B</td></tr>
+              <tr><td class="mono">128 GB</td><td>~70B</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="basemodel-note"><span class="mono">troy doctor</span> prints this guidance for the machine
+        it runs on. Bigger bases follow recipes more faithfully &mdash; the same 20-example persona
+        dataset that occasionally garbles on 0.6B speaks fluent pirate on Llama-3.2-1B.
+        One format note: <span class="mono">troy export -f gguf</span> covers llama, mistral, and
+        mixtral architectures; the default MLX export covers everything.</p>
+      </div>
+    </div>
   </div>
 </section>
 
