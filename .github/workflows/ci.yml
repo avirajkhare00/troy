@@ -1,0 +1,95 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    paths: ["cli/**", ".github/workflows/ci.yml"]
+  pull_request:
+    paths: ["cli/**", ".github/workflows/ci.yml"]
+
+jobs:
+  test:
+    name: Unit tests + training smoke (Apple Silicon)
+    runs-on: macos-15   # arm64 — MLX runs for real here
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Cache HF models
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface
+          key: hf-smollm2-135m-v1
+
+      - name: Install
+        run: |
+          python -m pip install --quiet ./cli pytest
+
+      - name: Unit tests
+        run: pytest cli/tests/ -q
+
+      - name: troy doctor
+        run: troy --version && troy doctor
+
+      - name: Training smoke test (SFT, 4 iters)
+        run: |
+          mkdir -p smoke/data && cd smoke
+          python - <<'PY'
+          import json
+          rows = [{"instruction": f"Say the number {i}.", "output": f"The number is {i}."} for i in range(24)]
+          with open("data/train.jsonl", "w") as f:
+              for r in rows: f.write(json.dumps(r) + "\n")
+          PY
+          cat > troy.yaml <<'YAML'
+          base: mlx-community/SmolLM2-135M-Instruct
+          task: sft
+          data:
+            train: ./data/train.jsonl
+            val_split: 0.1
+          training:
+            iters: 4
+            lr: 1e-4
+            batch_size: 2
+            seq_len: 256
+            lora: { r: 4, alpha: 8 }
+          output: ./output
+          YAML
+          troy train
+          test -f output/adapter/adapters.safetensors
+
+      - name: DPO smoke test (3 iters)
+        run: |
+          mkdir -p smoke-dpo/data && cd smoke-dpo
+          python - <<'PY'
+          import json
+          rows = [{"prompt": f"Q{i}?", "chosen": f"Short answer {i}.", "rejected": f"A very long rambling answer number {i} that goes on."} for i in range(12)]
+          with open("data/train.jsonl", "w") as f:
+              for r in rows: f.write(json.dumps(r) + "\n")
+          PY
+          cat > troy.yaml <<'YAML'
+          base: mlx-community/SmolLM2-135M-Instruct
+          task: dpo
+          data:
+            train: ./data/train.jsonl
+            format: preference
+            val_split: 0.0
+          training:
+            iters: 3
+            lr: 1e-5
+            batch_size: 2
+            seq_len: 256
+            lora: { r: 4, alpha: 8 }
+          output: ./output
+          YAML
+          troy train
+          test -f output/adapter/adapters.safetensors
+
+      - name: Export smoke test (fuse + GGUF)
+        run: |
+          cd smoke
+          troy export -f gguf
+          test -f output/fused/ggml-model-f16.gguf
+          python -c "import os; s=os.path.getsize('output/fused/ggml-model-f16.gguf'); assert s > 100e6, s"

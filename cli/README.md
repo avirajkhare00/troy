@@ -20,8 +20,7 @@ need a workstation GPU anywhere else.
 ## Install
 
 ```bash
-brew tap avirajkhare00/troy https://github.com/avirajkhare00/troy-homebrew
-brew install troy
+brew install avirajkhare00/troy/troy
 # or from source: pip install ./cli
 ```
 

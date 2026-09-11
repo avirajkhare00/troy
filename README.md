@@ -2,6 +2,8 @@
 
 **Fine-tune LLMs on your MacBook with one YAML file.**
 
+![troy train, then chat with the result — real session on an M1 Pro](web/assets/troy-demo.gif)
+
 Troy is a command-line tool for fine-tuning and preference-tuning language
 models locally on Apple Silicon. No CUDA, no cloud, no training pipeline —
 write a config, run one command, and train on the machine you already own.
@@ -15,8 +17,7 @@ Built on [MLX](https://github.com/ml-explore/mlx) and
 ## Quickstart
 
 ```bash
-brew tap avirajkhare00/troy https://github.com/avirajkhare00/troy-homebrew
-brew install troy   # requires an M1 or later
+brew install avirajkhare00/troy/troy   # requires an M1 or later
 
 troy doctor            # check your Mac: chip, memory, MLX, what you can train
 troy init              # create troy.yaml + sample data

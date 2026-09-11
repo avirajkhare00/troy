@@ -17,6 +17,7 @@
     <nav class="head-nav">
       <a href="#workflow">Workflow</a>
       <a href="cookbook/">Cookbook</a>
+      <a href="https://github.com/avirajkhare00/troy" class="gh-link">GitHub<span class="gh-star">★</span></a>
       <a href="#config">Config</a>
       <a href="#silicon">Why a Mac</a>
       <a class="head-install mono" href="#install">brew install troy</a>
@@ -38,7 +39,7 @@
         <code class="install-cmd mono" id="install-cmd">brew install troy<button class="copy-btn" aria-label="Copy install command" onclick="copyInstall(this)">copy</button></code>
         <a class="btn-ghost" href="#workflow">See the workflow</a>
       </div>
-      <p class="hero-fineprint">Via the <a href="https://github.com/avirajkhare00/troy-homebrew">Homebrew tap</a>. Open source, Apache-2.0. Requires an M1 or later.</p>
+      <p class="hero-fineprint">Via the <a href="https://github.com/avirajkhare00/homebrew-troy">Homebrew tap</a>. Open source, Apache-2.0. Requires an M1 or later.</p>
     </div>
 
     <figure class="terminal" aria-label="A real troy training session">
@@ -167,7 +168,7 @@ loss = dpo(policy_logps, ref_logps)</code></pre>
 <section class="section" id="install">
   <div class="wrap install-final">
     <h2>Your MacBook is the training rig.</h2>
-    <code class="install-cmd mono" title="brew tap avirajkhare00/troy https://github.com/avirajkhare00/troy-homebrew && brew install troy">brew install troy<button class="copy-btn" aria-label="Copy install command" onclick="copyInstall(this)">copy</button></code>
+    <code class="install-cmd mono" title="brew install avirajkhare00/troy/troy">brew install troy<button class="copy-btn" aria-label="Copy install command" onclick="copyInstall(this)">copy</button></code>
     <p class="hero-fineprint">Then: <span class="mono">troy doctor</span> to see what this machine can do &mdash; and the <a href="cookbook/">cookbook</a> for what to build with it.</p>
   </div>
 </section>
@@ -177,13 +178,13 @@ loss = dpo(policy_logps, ref_logps)</code></pre>
 <footer class="site-foot">
   <div class="wrap foot-row">
     <span class="wordmark small">troy</span>
-    <span>Built on <a href="https://github.com/ml-explore/mlx-lm">MLX</a> · Apache-2.0 · Runs entirely on your machine</span>
+    <span>Built on <a href="https://github.com/ml-explore/mlx-lm">MLX</a> · Apache-2.0 · <a href="https://github.com/avirajkhare00/troy">Star it on GitHub</a></span>
   </div>
 </footer>
 
 <script>
 function copyInstall(btn){
-  navigator.clipboard.writeText("brew tap avirajkhare00/troy https://github.com/avirajkhare00/troy-homebrew && brew install troy").then(function(){
+  navigator.clipboard.writeText("brew install avirajkhare00/troy/troy").then(function(){
     btn.textContent = "copied";
     setTimeout(function(){ btn.textContent = "copy"; }, 1600);
   });

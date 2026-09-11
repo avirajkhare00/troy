@@ -17,6 +17,7 @@
     <nav class="head-nav">
       <a href="../#workflow">Workflow</a>
       <a href="./" aria-current="page">Cookbook</a>
+      <a href="https://github.com/avirajkhare00/troy" class="gh-link">GitHub<span class="gh-star">★</span></a>
       <a class="head-install mono" href="../#install">brew install troy</a>
     </nav>
   </div>
@@ -328,7 +329,7 @@ Converting to GGUF format</span>
 <section class="section section-alt">
   <div class="wrap install-final">
     <h2>Bring a recipe, leave with a model.</h2>
-    <code class="install-cmd mono" title="brew tap avirajkhare00/troy https://github.com/avirajkhare00/troy-homebrew && brew install troy">brew install troy<button class="copy-btn" aria-label="Copy install command" onclick="copyInstall(this)">copy</button></code>
+    <code class="install-cmd mono" title="brew install avirajkhare00/troy/troy">brew install troy<button class="copy-btn" aria-label="Copy install command" onclick="copyInstall(this)">copy</button></code>
     <p class="hero-fineprint">Have a recipe of your own? <a href="https://github.com/avirajkhare00/troy">Open a PR</a> &mdash; verified recipes only.</p>
   </div>
 </section>
@@ -338,13 +339,13 @@ Converting to GGUF format</span>
 <footer class="site-foot">
   <div class="wrap foot-row">
     <span class="wordmark small">troy</span>
-    <span>Built on <a href="https://github.com/ml-explore/mlx-lm">MLX</a> · Apache-2.0 · Runs entirely on your machine</span>
+    <span>Built on <a href="https://github.com/ml-explore/mlx-lm">MLX</a> · Apache-2.0 · <a href="https://github.com/avirajkhare00/troy">Star it on GitHub</a></span>
   </div>
 </footer>
 
 <script>
 function copyInstall(btn){
-  navigator.clipboard.writeText("brew tap avirajkhare00/troy https://github.com/avirajkhare00/troy-homebrew && brew install troy").then(function(){
+  navigator.clipboard.writeText("brew install avirajkhare00/troy/troy").then(function(){
     btn.textContent = "copied";
     setTimeout(function(){ btn.textContent = "copy"; }, 1600);
   });

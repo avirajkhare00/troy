@@ -321,3 +321,5 @@ a { color: inherit; }
 .recipe-term .term-body { min-height: 0; }
 .codecard .s { color: #b8c8a8; }
 .basemodel-note { color: var(--muted); font-size: 0.92rem; margin-top: 16px; line-height: 1.6; }
+.gh-link { display: inline-flex; align-items: center; gap: 5px; }
+.gh-star { color: var(--accent); font-size: 0.85em; }
