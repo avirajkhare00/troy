@@ -21,7 +21,7 @@ need a workstation GPU anywhere else.
 
 ```bash
 brew install avirajkhare00/troy/troy
-# or from source: pip install ./cli
+# or: pipx install troy-cli
 ```
 
 ## Quickstart

@@ -17,7 +17,7 @@ Built on [MLX](https://github.com/ml-explore/mlx) and
 ## Quickstart
 
 ```bash
-brew install avirajkhare00/troy/troy   # requires an M1 or later
+brew install avirajkhare00/troy/troy   # or: pipx install troy-cli
 
 troy doctor            # check your Mac: chip, memory, MLX, what you can train
 troy init              # create troy.yaml + sample data
