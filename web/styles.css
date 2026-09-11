@@ -294,3 +294,29 @@ a { color: inherit; }
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
 }
+
+/* ---------- cookbook ---------- */
+.cook-hero { padding: 72px 0 64px; }
+.recipe-index { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 36px; }
+.recipe-index a {
+  text-decoration: none;
+  color: var(--ink);
+  border: 1px solid var(--line);
+  background: var(--panel);
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-size: 0.92rem;
+}
+.recipe-index a:hover { border-color: var(--muted); }
+.recipe-index .mono { color: var(--accent-ink); margin-right: 8px; font-size: 0.8em; }
+.recipe-no { font-size: 0.8rem; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 14px; }
+.verified { color: var(--accent-ink); }
+.recipe-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 18px;
+  margin-bottom: 18px;
+}
+@media (max-width: 860px) { .recipe-grid { grid-template-columns: 1fr; } }
+.recipe-term .term-body { min-height: 0; }
+.codecard .s { color: #b8c8a8; }
