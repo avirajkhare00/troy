@@ -2,6 +2,12 @@
 
 **Fine-tune LLMs on your MacBook with one YAML file.**
 
+[![CI](https://github.com/avirajkhare00/troy/actions/workflows/ci.yml/badge.svg)](https://github.com/avirajkhare00/troy/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/troy-cli?color=e4570f)](https://pypi.org/project/troy-cli/)
+[![Homebrew](https://img.shields.io/badge/homebrew-avirajkhare00%2Ftroy-e4570f)](https://github.com/avirajkhare00/homebrew-troy)
+[![License](https://img.shields.io/badge/license-Apache--2.0-lightgrey)](LICENSE)
+[![Platform](https://img.shields.io/badge/platform-Apple%20Silicon-black?logo=apple)](https://gettroy.app)
+
 ![troy train, then chat with the result — real session on an M1 Pro](web/assets/troy-demo.gif)
 
 Troy is a command-line tool for fine-tuning and preference-tuning language
