@@ -41,6 +41,7 @@ jobs:
             --title "Troy ${GITHUB_REF_NAME}" --generate-notes || true
 
       - name: Bump Homebrew formula
+        if: ${{ secrets.TAP_GITHUB_TOKEN != '' }}
         env:
           TAP_TOKEN: ${{ secrets.TAP_GITHUB_TOKEN }}
         run: |
