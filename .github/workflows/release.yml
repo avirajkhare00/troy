@@ -41,10 +41,13 @@ jobs:
             --title "Troy ${GITHUB_REF_NAME}" --generate-notes || true
 
       - name: Bump Homebrew formula
-        if: ${{ secrets.TAP_GITHUB_TOKEN != '' }}
         env:
           TAP_TOKEN: ${{ secrets.TAP_GITHUB_TOKEN }}
         run: |
+          if [ -z "$TAP_TOKEN" ]; then
+            echo "TAP_GITHUB_TOKEN not set — skipping formula bump."
+            exit 0
+          fi
           TAG="${GITHUB_REF_NAME}"
           curl -sL "https://github.com/${GITHUB_REPOSITORY}/archive/refs/tags/${TAG}.tar.gz" -o release.tar.gz
           SHA=$(shasum -a 256 release.tar.gz | cut -d' ' -f1)
