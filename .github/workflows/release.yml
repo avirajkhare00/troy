@@ -9,8 +9,8 @@ permissions:
   id-token: write   # PyPI trusted publishing
 
 jobs:
-  release:
-    runs-on: macos-15
+  build:
+    runs-on: macos-15   # arm64 — the wheel smoke-check runs real MLX imports
     steps:
       - uses: actions/checkout@v4
 
@@ -27,6 +27,20 @@ jobs:
         run: |
           python -m pip install --quiet dist/*.whl
           troy --version
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest   # pypi-publish action is Linux-only
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
 
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
@@ -53,7 +67,7 @@ jobs:
           SHA=$(shasum -a 256 release.tar.gz | cut -d' ' -f1)
           git clone "https://x-access-token:${TAP_TOKEN}@github.com/avirajkhare00/homebrew-troy.git" tap
           cd tap
-          sed -i '' -E "s|refs/tags/v[0-9.]+\.tar\.gz|refs/tags/${TAG}.tar.gz|; s|sha256 \".*\"|sha256 \"${SHA}\"|" Formula/troy.rb
+          sed -i -E "s|refs/tags/v[0-9.]+\.tar\.gz|refs/tags/${TAG}.tar.gz|; s|sha256 \".*\"|sha256 \"${SHA}\"|" Formula/troy.rb
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git commit -am "troy ${TAG}"
