@@ -29,15 +29,17 @@ troy doctor            # check your Mac: chip, memory, MLX, what you can train
 troy init              # create troy.yaml + sample data
 troy train             # fine-tune (LoRA/QLoRA via MLX)
 troy chat              # talk to the result
+troy eval              # did it work? base-vs-tuned loss + samples
 troy serve             # OpenAI-compatible API at localhost:8080/v1
 troy export -f gguf    # ship it to llama.cpp / Ollama / LM Studio
+troy push you/model    # upload to the Hugging Face Hub
 ```
 
 ## The config is the interface
 
 ```yaml
 base: mlx-community/Qwen3-0.6B-4bit
-task: sft            # or: dpo
+task: sft            # or: dpo, orpo
 
 data:
   train: ./data/train.jsonl   # alpaca, sharegpt, chat, completions, text — auto-detected
@@ -65,9 +67,21 @@ output: ./output
 | 64 GB | ~32B |
 | 128 GB | ~70B |
 
+## Troubleshooting
+
+- **`troy: command not found`** — `brew install avirajkhare00/troy/troy` or `pipx ensurepath` then restart the shell.
+- **"Troy runs on Apple Silicon Macs only"** — Troy requires an M1 or later; Intel Macs and Linux are not supported.
+- **Model download fails / rate-limited** — set `HF_TOKEN` (free account) for higher Hugging Face rate limits.
+- **Out of memory during training** — pick a smaller/4-bit base (see `troy doctor`), lower `batch_size` to 1, reduce `seq_len`, or set `grad_checkpoint: true`.
+- **Reply cut off over the API (`troy serve`)** — reasoning models (e.g. Qwen3) think before answering; raise `max_tokens`.
+- **GGUF export fails** — `-f gguf` supports llama/mistral/mixtral architectures with an unquantized base; the default MLX export covers everything.
+- Something else? [Open an issue](https://github.com/avirajkhare00/troy/issues) with your `troy doctor` output, or ask in [Discussions](https://github.com/avirajkhare00/troy/discussions).
+
 ## Repository layout
 
 - [`cli/`](cli/) — the Troy CLI (Python, MLX)
+- [`examples/`](examples/) — runnable configs for every cookbook recipe
+- [`benchmarks/`](benchmarks/) — measured numbers from real runs
 - [`web/`](web/) — the website, deployed to GitHub Pages from `main`
 
 ## License

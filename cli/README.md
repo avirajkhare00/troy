@@ -39,7 +39,7 @@ troy export -f gguf    # ship it to llama.cpp / Ollama / LM Studio
 
 ```yaml
 base: mlx-community/Qwen3-0.6B-4bit
-task: sft            # or: dpo
+task: sft            # or: dpo, orpo
 
 data:
   train: ./data/train.jsonl   # alpaca, sharegpt, chat, completions, text — auto-detected
@@ -62,10 +62,12 @@ output: ./output
 |---|---|
 | `troy init` | Create a config from a template (`chat`, `dpo`) |
 | `troy doctor` | Hardware + dependency check, with model-size guidance |
-| `troy train` | LoRA fine-tuning: SFT or DPO |
+| `troy train` | LoRA fine-tuning: SFT, DPO, or ORPO |
 | `troy chat` | Interactive REPL (or `-p` for one-shot) with your adapter |
+| `troy eval` | Base-vs-tuned val loss, perplexity, side-by-side samples |
 | `troy serve` | OpenAI-compatible API server for your model |
 | `troy export` | Fuse the adapter; export MLX or GGUF |
+| `troy push` | Upload adapter or fused model to the Hugging Face Hub |
 | `troy data inspect` | Dataset stats and format detection |
 
 ## What Troy can train on your Mac

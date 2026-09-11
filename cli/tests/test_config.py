@@ -49,3 +49,11 @@ def test_missing_file_message(tmp_path):
 def test_adapter_path_under_output():
     cfg = TroyConfig.model_validate({**BASE, "output": "/tmp/run1"})
     assert str(cfg.adapter_path) == "/tmp/run1/adapter"
+
+
+def test_orpo_config():
+    cfg = TroyConfig.model_validate(
+        {**BASE, "task": "orpo", "training": {"orpo": {"lambda": 0.2}}}
+    )
+    assert cfg.task == "orpo"
+    assert cfg.training.orpo.lam == 0.2

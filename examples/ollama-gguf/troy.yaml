@@ -1,0 +1,17 @@
+base: mlx-community/SmolLM2-135M-Instruct
+task: sft
+
+data:
+  train: ./data/train.jsonl
+  val_split: 0.1
+
+training:
+  epochs: 8
+  lr: 1e-4
+  batch_size: 2
+  seq_len: 1024
+  lora:
+    r: 8
+    alpha: 16
+
+output: ./output

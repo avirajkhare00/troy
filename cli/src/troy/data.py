@@ -117,13 +117,15 @@ def load_and_prepare(
 
     fmt = cfg.format if cfg.format != "auto" else detect_format(records[0])
 
-    if task == "dpo" and fmt != "preference":
+    if task in ("dpo", "orpo") and fmt != "preference":
         raise ValueError(
-            f"Task `dpo` needs preference data (prompt/chosen/rejected); "
+            f"Task `{task}` needs preference data (prompt/chosen/rejected); "
             f"detected format `{fmt}`."
         )
     if task == "sft" and fmt == "preference":
-        raise ValueError("Preference data detected — set `task: dpo` in troy.yaml.")
+        raise ValueError(
+            "Preference data detected — set `task: dpo` (or `task: orpo`) in troy.yaml."
+        )
 
     if fmt == "preference":
         records = [_normalize_preference(r) for r in records]

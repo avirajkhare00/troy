@@ -1,0 +1,20 @@
+base: mlx-community/Qwen3-0.6B-4bit
+task: orpo
+
+data:
+  train: ./data/train.jsonl
+  format: preference
+  val_split: 0.05
+
+training:
+  iters: 30
+  lr: 2e-5
+  batch_size: 2
+  seq_len: 1024
+  lora:
+    r: 8
+    alpha: 16
+  orpo:
+    lambda: 0.2
+
+output: ./output

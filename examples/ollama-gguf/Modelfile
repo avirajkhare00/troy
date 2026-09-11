@@ -1,0 +1,1 @@
+FROM ./output/fused/ggml-model-f16.gguf

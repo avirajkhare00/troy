@@ -6,7 +6,7 @@ import json
 import platform
 import sys
 from pathlib import Path
-from typing import Optional
+from typing import List, Optional
 
 import typer
 from rich.console import Console
@@ -149,6 +149,10 @@ def train(
         from .train_sft import run_sft
 
         run_sft(cfg, train_records, valid_records)
+    elif cfg.task == "orpo":
+        from .train_orpo import run_orpo
+
+        run_orpo(cfg, train_records, valid_records)
     else:
         from .train_dpo import run_dpo
 
@@ -246,6 +250,46 @@ def export(
         raise typer.Exit(1)
     out = save_path or (cfg.output_path / "fused")
     run_export(cfg.base, str(cfg.adapter_path), str(out), fmt, dequantize)
+
+
+@app.command()
+def eval(
+    config: Path = typer.Option(Path("troy.yaml"), "--config", "-c", help="Config file."),
+    prompts: Optional[List[str]] = typer.Option(
+        None, "--prompt", "-p",
+        help="Prompt for side-by-side base-vs-tuned generation (repeatable).",
+    ),
+    max_tokens: int = typer.Option(200),
+) -> None:
+    """Compare the trained adapter against the base model (loss, ppl, samples)."""
+    _require_apple_silicon()
+    from .config import load_config
+    from .data import load_and_prepare
+    from .evaluate import run_eval
+
+    cfg = load_config(config)
+    _, valid_records, _ = load_and_prepare(cfg.data, cfg.task, cfg.training.seed)
+    run_eval(cfg, valid_records, list(prompts) if prompts else None, max_tokens)
+
+
+@app.command()
+def push(
+    repo: str = typer.Argument(help="Hub repo id, e.g. username/my-model."),
+    config: Path = typer.Option(Path("troy.yaml"), "--config", "-c", help="Config file."),
+    fused: bool = typer.Option(False, help="Push the fused model instead of the adapter."),
+    public: bool = typer.Option(False, help="Make the Hub repo public."),
+) -> None:
+    """Upload your trained adapter (or fused model) to the Hugging Face Hub."""
+    from .config import load_config
+    from .push import run_push
+
+    cfg = load_config(config)
+    folder = (cfg.output_path / "fused") if fused else cfg.adapter_path
+    if not folder.exists():
+        what = "troy export" if fused else "troy train"
+        console.print(f"[red]{folder} not found. Run `{what}` first.[/red]")
+        raise typer.Exit(1)
+    run_push(folder, repo, private=not public)
 
 
 @app.command()

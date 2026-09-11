@@ -24,6 +24,11 @@ class DpoConfig(BaseModel):
     beta: float = 0.1
 
 
+class OrpoConfig(BaseModel):
+    lam: float = Field(0.1, alias="lambda")
+    model_config = {"populate_by_name": True}
+
+
 class DataConfig(BaseModel):
     train: str
     valid: Optional[str] = None
@@ -42,6 +47,7 @@ class TrainingConfig(BaseModel):
     seq_len: int = 2048
     lora: LoraConfig = LoraConfig()
     dpo: DpoConfig = DpoConfig()
+    orpo: OrpoConfig = OrpoConfig()
     grad_checkpoint: bool = False
     grad_accumulation_steps: int = 1
     save_every: int = 100
@@ -50,7 +56,7 @@ class TrainingConfig(BaseModel):
 
 class TroyConfig(BaseModel):
     base: str
-    task: Literal["sft", "dpo"] = "sft"
+    task: Literal["sft", "dpo", "orpo"] = "sft"
     data: DataConfig
     training: TrainingConfig = TrainingConfig()
     output: str = "./output"

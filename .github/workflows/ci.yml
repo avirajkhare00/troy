@@ -87,6 +87,13 @@ jobs:
           troy train
           test -f output/adapter/adapters.safetensors
 
+      - name: ORPO smoke test (3 iters)
+        run: |
+          cd smoke-dpo
+          sed -i '' 's/task: dpo/task: orpo/' troy.yaml
+          rm -rf output && troy train
+          test -f output/adapter/adapters.safetensors
+
       - name: Export smoke test (fuse + GGUF)
         run: |
           cd smoke

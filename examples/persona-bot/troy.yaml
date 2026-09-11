@@ -1,0 +1,17 @@
+base: mlx-community/Qwen3-0.6B-4bit
+task: sft
+
+data:
+  train: ./data/train.jsonl
+  val_split: 0.1
+
+training:
+  epochs: 8
+  lr: 5e-5
+  batch_size: 2
+  seq_len: 1024
+  lora:
+    r: 8
+    alpha: 16
+
+output: ./output
