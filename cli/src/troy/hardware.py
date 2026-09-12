@@ -42,7 +42,8 @@ def detect() -> Hardware:
     )
 
 
-# (min unified memory GB, guidance) — QLoRA 4-bit fine-tuning headroom.
+# (min unified memory GB, guidance) — QLoRA 4-bit sizing EXAMPLES, not a
+# whitelist: any mlx-lm-supported architecture trains.
 MODEL_GUIDANCE = [
     (128, "up to ~70B (4-bit QLoRA), e.g. Llama-3.3-70B, Qwen2.5-72B"),
     (64, "up to ~32B (4-bit QLoRA), e.g. Qwen2.5-32B, Gemma-2-27B"),

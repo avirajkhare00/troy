@@ -120,7 +120,12 @@ def doctor() -> None:
     except ImportError:
         table.add_row("mlx-lm", f"{fail} (not installed)")
 
-    table.add_row("Fine-tunable models", model_guidance(hw.memory_gb))
+    table.add_row("Comfortable size", model_guidance(hw.memory_gb))
+    table.add_row(
+        "Supported models",
+        "any mlx-lm architecture (Llama, Qwen, Gemma, Phi, Mistral, ...)\n"
+        "thousands of ready conversions: hf.co/mlx-community",
+    )
     console.print(table)
 
     if not hw.is_apple_silicon:

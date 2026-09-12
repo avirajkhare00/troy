@@ -58,6 +58,8 @@ output: ./output
 
 ## What Troy can train on your Mac
 
+Any architecture [mlx-lm](https://github.com/ml-explore/mlx-lm) supports — Llama, Qwen, Gemma, Phi, Mistral, and the rest — with thousands of ready conversions on [mlx-community](https://huggingface.co/mlx-community). The table is sizing guidance, not a catalog:
+
 | Unified memory | Max model (4-bit QLoRA) |
 |---|---|
 | 8 GB | ~1.5B |
