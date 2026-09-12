@@ -89,8 +89,10 @@ bye bhai</span></pre>
     <h2>The actual work was the data, not the training</h2>
     <p class="section-lede">There is no bhai-lang corpus to scrape. So the dataset is synthetic &mdash;
     and the rule that made it work: <strong>every training example was execution-verified before
-    inclusion.</strong> A small Python interpreter for bhai-lang runs each generated program and checks
-    its output against an independently computed answer. Bad programs never reach the model.</p>
+    inclusion.</strong> A small Python interpreter for bhai-lang runs every program and checks its output against an
+    independently computed answer &mdash; and because the programs come from templates rather than a
+    model, a mismatch doesn't discard the pair, it fails the whole build. The gate's job is catching
+    template and interpreter bugs loudly during development, so training data can't silently rot.</p>
     <div class="recipe-grid">
       <figure class="codecard">
         <figcaption class="codecard-title mono">the pipeline</figcaption>
@@ -102,10 +104,12 @@ bye bhai</span></pre>
 <span class="k">for each generated (instruction, program):</span>
     out = run_bhai(program)      <span class="c"># interpreter</span>
     expect = compute_reference() <span class="c"># independent</span>
-    <span class="k">keep only if</span> out == expect
+    <span class="k">assert</span> out == expect  <span class="c"># mismatch FAILS THE BUILD</span>
 
-<span class="c"># 1,400 train + 100 held-out pairs</span>
-<span class="c"># English and Hinglish phrasings</span></code></pre>
+<span class="c"># templates, not a model, write the programs —</span>
+<span class="c"># so a mismatch means a bug, never a discard.</span>
+<span class="c"># shipped run: 2,016 attempts -> 1,500 kept</span>
+<span class="c"># (0 mismatches; 516 near-duplicates deduped)</span></code></pre>
       </figure>
       <figure class="codecard">
         <figcaption class="codecard-title mono">troy.yaml &mdash; the whole training setup</figcaption>
