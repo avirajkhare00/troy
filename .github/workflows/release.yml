@@ -47,12 +47,17 @@ jobs:
         with:
           packages-dir: dist/
 
+      - name: Package Claude skill
+        run: |
+          curl -sL "https://github.com/${GITHUB_REPOSITORY}/archive/${GITHUB_REF_NAME}.tar.gz" | tar xz --strip-components=1 "troy-${GITHUB_REF_NAME#v}/skills"
+          cd skills && zip -r ../troy-skill.zip troy
+
       - name: Create GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh release create "${GITHUB_REF_NAME}" --repo "${GITHUB_REPOSITORY}" \
-            --title "Troy ${GITHUB_REF_NAME}" --generate-notes || true
+            --title "Troy ${GITHUB_REF_NAME}" --generate-notes troy-skill.zip || true
 
       - name: Bump Homebrew formula
         env:

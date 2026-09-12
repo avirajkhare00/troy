@@ -1,0 +1,11 @@
+{
+  "name": "troy",
+  "owner": { "name": "avirajkhare00", "url": "https://github.com/avirajkhare00" },
+  "plugins": [
+    {
+      "name": "troy",
+      "source": "./",
+      "description": "Teach Claude the Troy CLI: fine-tune LLMs on Apple Silicon Macs with one YAML file."
+    }
+  ]
+}

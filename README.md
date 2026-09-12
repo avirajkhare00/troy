@@ -81,13 +81,26 @@ Any architecture [mlx-lm](https://github.com/ml-explore/mlx-lm) supports — Lla
 
 ## Claude skill
 
-Working with Claude (Claude Code, claude.ai)? Install the Troy skill so any
-session knows the tool, the config schema, and the verified recipes:
+Working with Claude? Install the Troy skill so any session knows the tool,
+the config schema, and the verified recipes. Three ways:
+
+**Claude Code — plugin (recommended):**
+
+```
+/plugin marketplace add avirajkhare00/troy
+/plugin install troy@troy
+```
+
+**Claude Code — one-liner (skill files only):**
 
 ```bash
-git clone https://github.com/avirajkhare00/troy /tmp/troy-repo
-cp -r /tmp/troy-repo/skills/troy ~/.claude/skills/troy
+mkdir -p ~/.claude/skills/troy && for f in SKILL.md reference.md recipes.md; do \
+  curl -sL "https://raw.githubusercontent.com/avirajkhare00/troy/main/skills/troy/$f" \
+  -o ~/.claude/skills/troy/$f; done
 ```
+
+**claude.ai (web/desktop):** download [`troy-skill.zip`](https://github.com/avirajkhare00/troy/releases/latest/download/troy-skill.zip)
+from the latest release and upload it under Settings → Capabilities → Skills.
 
 Claude then picks it up automatically whenever a conversation involves
 fine-tuning on a Mac (or invoke it directly with `/troy` in Claude Code).
