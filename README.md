@@ -79,11 +79,25 @@ Any architecture [mlx-lm](https://github.com/ml-explore/mlx-lm) supports — Lla
 - **GGUF export fails** — `-f gguf` supports llama/mistral/mixtral architectures with an unquantized base; the default MLX export covers everything.
 - Something else? [Open an issue](https://github.com/avirajkhare00/troy/issues) with your `troy doctor` output, or ask in [Discussions](https://github.com/avirajkhare00/troy/discussions).
 
+## Claude skill
+
+Working with Claude (Claude Code, claude.ai)? Install the Troy skill so any
+session knows the tool, the config schema, and the verified recipes:
+
+```bash
+git clone https://github.com/avirajkhare00/troy /tmp/troy-repo
+cp -r /tmp/troy-repo/skills/troy ~/.claude/skills/troy
+```
+
+Claude then picks it up automatically whenever a conversation involves
+fine-tuning on a Mac (or invoke it directly with `/troy` in Claude Code).
+
 ## Repository layout
 
 - [`cli/`](cli/) — the Troy CLI (Python, MLX)
 - [`examples/`](examples/) — runnable configs for every cookbook recipe
 - [`benchmarks/`](benchmarks/) — measured numbers from real runs
+- [`skills/`](skills/) — the Troy skill for Claude (Claude Code / claude.ai)
 - [`web/`](web/) — the website, deployed to GitHub Pages from `main`
 
 ## License
