@@ -47,6 +47,7 @@
       <a href="#api"><span class="mono">04</span> Local OpenAI-compatible API</a>
       <a href="#ollama"><span class="mono">05</span> Ship to Ollama</a>
       <a href="#orpo"><span class="mono">06</span> ORPO: lighter preference tuning</a>
+      <a href="#vision"><span class="mono">07</span> Vision: fine-tune on images</a>
     </nav>
   </div>
 </section>
@@ -377,7 +378,57 @@ Iter 30/30: loss 0.6778, reward acc 1.000, 3.20 it/s</span>
   </div>
 </section>
 
-<section class="section">
+<!-- ================= RECIPE 7 ================= -->
+<section class="section recipe" id="vision">
+  <div class="wrap">
+    <p class="recipe-no mono">Recipe 07 · Vision SFT · <span class="verified">verified on M1 Pro, 16 GB</span></p>
+    <h2>Beyond text: fine-tune a vision model on your images</h2>
+    <p class="section-lede">Teach a vision-language model your visual domain &mdash; product photos,
+    documents, UI screenshots. The contract stays one YAML file; the only change is that
+    <span class="mono">data.train</span> points at a <em>folder</em>: images plus a
+    <span class="mono">metadata.jsonl</span> of questions and answers. A 2B VLM trained in
+    <strong>2.4&nbsp;GB peak memory</strong> here. Needs the vision extra:
+    <span class="mono">pip install 'troy-cli[vision]'</span>.</p>
+
+    <div class="recipe-grid">
+      <figure class="codecard">
+        <figcaption class="codecard-title mono">data/metadata.jsonl &mdash; next to your images</figcaption>
+<pre class="mono"><code>{<span class="k">"file_name"</span>: <span class="s">"img_001.png"</span>,
+ <span class="k">"question"</span>: <span class="s">"What shape and color do you see?"</span>,
+ <span class="k">"answer"</span>: <span class="s">"A red square."</span>}</code></pre>
+      </figure>
+      <figure class="codecard">
+        <figcaption class="codecard-title mono">troy.yaml</figcaption>
+<pre class="mono"><code><span class="k">base:</span> mlx-community/Qwen2-VL-2B-Instruct-4bit
+<span class="k">task:</span> sft
+
+<span class="k">data:</span>
+  <span class="k">train:</span> ./data   <span class="c"># a folder means vision</span>
+
+<span class="k">training:</span>
+  <span class="k">iters:</span> 30
+  <span class="k">lr:</span> 1e-4
+  <span class="k">batch_size:</span> 1
+  <span class="k">lora:</span> { <span class="k">r:</span> 8, <span class="k">alpha:</span> 16 }
+
+<span class="k">output:</span> ./output</code></pre>
+      </figure>
+    </div>
+
+    <figure class="terminal recipe-term">
+      <figcaption class="term-bar"><span class="term-dot red"></span><span class="term-dot yellow"></span><span class="term-dot green"></span><span class="term-title mono">verify</span></figcaption>
+<pre class="term-body mono"><span class="t-cmd">$ troy train</span>
+<span class="t-dim">Vision data: 24 images (folder: data)
+Iter 30: Train loss 5.037, It/sec 2.021, Peak mem 2.443 GB</span>
+<span class="t-cmd">$ troy chat --image test_blue_circle.png -p "What shape and color do you see?"</span>
+<span class="t-ok">A blue circle.</span></pre>
+      <figcaption class="term-note">The test image is a shape/color combination absent from training.
+    Audio and TTS aren't covered yet: MLX fine-tuning support for them is still thin upstream.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="section section-alt">
   <div class="wrap install-final">
     <h2>Bring a recipe, leave with a model.</h2>
     <code class="install-cmd mono" title="brew install avirajkhare00/troy/troy">brew install troy<button class="copy-btn" aria-label="Copy install command" onclick="copyInstall(this)">copy</button></code>

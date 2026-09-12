@@ -1,6 +1,6 @@
 [project]
 name = "troy-cli"
-version = "0.2.2"
+version = "0.3.0"
 description = "Fine-tune LLMs on your MacBook with one YAML file. Built for Apple Silicon."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -14,6 +14,9 @@ dependencies = [
     "typer>=0.12",
     "rich>=13.0",
 ]
+
+[project.optional-dependencies]
+vision = ["mlx-vlm[train]>=0.7"]
 
 [project.scripts]
 troy = "troy.cli:app"

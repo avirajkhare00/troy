@@ -1,0 +1,16 @@
+base: mlx-community/Qwen2-VL-2B-Instruct-4bit
+task: sft
+
+data:
+  train: ./data        # a FOLDER means vision: images + metadata.jsonl
+
+training:
+  iters: 30
+  lr: 1e-4
+  batch_size: 1
+  seq_len: 2048
+  lora:
+    r: 8
+    alpha: 16
+
+output: ./output

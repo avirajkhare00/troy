@@ -10,6 +10,7 @@ on an M1 Pro (16 GB). Full walkthroughs with real outputs: https://gettroy.app/c
 | [`concise-dpo/`](concise-dpo/) | DPO | Preference tuning (no reference copy in memory) |
 | [`concise-orpo/`](concise-orpo/) | ORPO | Preference tuning with no reference model at all |
 | [`ollama-gguf/`](ollama-gguf/) | SFT + export | Llama-arch base → GGUF → Ollama |
+| [`vision-shapes/`](vision-shapes/) | Vision SFT | Fine-tune a VLM on images (`troy-cli[vision]`) |
 
 Run any of them:
 

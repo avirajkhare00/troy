@@ -142,6 +142,19 @@ def train(
     from .data import load_and_prepare
 
     cfg = load_config(config)
+
+    if Path(cfg.data.train).expanduser().is_dir():  # folder of images => vision
+        if cfg.task != "sft":
+            console.print("[red]Vision fine-tuning supports task: sft (for now).[/red]")
+            raise typer.Exit(1)
+        from .train_vision import run_vision_sft
+
+        run_vision_sft(cfg)
+        console.print(
+            '\nTry it: [bold]troy chat --image photo.png -p "your question"[/bold]'
+        )
+        return
+
     train_records, valid_records, fmt = load_and_prepare(
         cfg.data, cfg.task, cfg.training.seed
     )
@@ -179,6 +192,7 @@ def chat(
     max_tokens: int = typer.Option(512),
     temperature: float = typer.Option(0.7),
     prompt: Optional[str] = typer.Option(None, "--prompt", "-p", help="One-shot prompt (no REPL)."),
+    image: Optional[Path] = typer.Option(None, help="Image for a vision model (one-shot; needs -p)."),
 ) -> None:
     """Chat with your fine-tuned model."""
     _require_apple_silicon()
@@ -198,6 +212,14 @@ def chat(
                 console.print(
                     "[yellow]No trained adapter found — chatting with the base model.[/yellow]"
                 )
+    if image is not None:
+        if prompt is None:
+            console.print("[red]--image needs a one-shot prompt: -p \"your question\"[/red]")
+            raise typer.Exit(1)
+        from .train_vision import run_vision_chat
+
+        run_vision_chat(model, adapter, str(image), prompt, max_tokens, temperature)
+        return
     run_chat(model, adapter, max_tokens, temperature, prompt)
 
 

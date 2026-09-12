@@ -64,7 +64,7 @@ output: ./output
 |---|---|
 | `troy init` | Create a config from a template (`chat`, `dpo`, `orpo`) |
 | `troy doctor` | Hardware + dependency check, with model-size guidance |
-| `troy train` | LoRA fine-tuning: SFT, DPO, or ORPO |
+| `troy train` | LoRA fine-tuning: SFT, DPO, or ORPO — text, or vision with `[vision]` extra |
 | `troy chat` | Interactive REPL (or `-p` for one-shot) with your adapter |
 | `troy eval` | Base-vs-tuned val loss, perplexity, side-by-side samples |
 | `troy serve` | OpenAI-compatible API server for your model |

@@ -39,7 +39,7 @@ troy push you/model    # upload to the Hugging Face Hub
 
 ```yaml
 base: mlx-community/Qwen3-0.6B-4bit
-task: sft            # or: dpo, orpo
+task: sft            # or: dpo, orpo — vision: point data.train at an image folder
 
 data:
   train: ./data/train.jsonl   # alpaca, sharegpt, chat, completions, text — auto-detected
@@ -58,7 +58,7 @@ output: ./output
 
 ## What Troy can train on your Mac
 
-Any architecture [mlx-lm](https://github.com/ml-explore/mlx-lm) supports — Llama, Qwen, Gemma, Phi, Mistral, and the rest — with thousands of ready conversions on [mlx-community](https://huggingface.co/mlx-community). The table is sizing guidance, not a catalog:
+Any architecture [mlx-lm](https://github.com/ml-explore/mlx-lm) supports — Llama, Qwen, Gemma, Phi, Mistral, and the rest — plus vision-language models (Qwen2-VL, SmolVLM, …) via `pip install 'troy-cli[vision]'` — with thousands of ready conversions on [mlx-community](https://huggingface.co/mlx-community). The table is sizing guidance, not a catalog:
 
 | Unified memory | Max model (4-bit QLoRA) |
 |---|---|
