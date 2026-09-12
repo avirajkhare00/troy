@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bhai-lang Coder</title>
+<meta name="description" content="Case study: teaching a 1.5B model to write bhai-lang on a MacBook — synthetic execution-verified data, 40 minutes of local training, 100/100 functional pass rate.">
+<meta property="og:title" content="We taught a model bhai-lang on a MacBook">
+<meta property="og:description" content="1,400 execution-verified synthetic examples, 40 minutes of QLoRA on an M1 Pro, 100/100 functional pass rate. A Troy case study.">
+<meta property="og:image" content="https://gettroy.app/assets/og.png">
+<meta property="og:url" content="https://gettroy.app/bhai-lang/">
+<meta property="og:type" content="article">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;600;700&display=swap">
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+
+<header class="site-head">
+  <div class="wrap head-row">
+    <a class="wordmark" href="../">troy</a>
+    <nav class="head-nav">
+      <a href="../#workflow">Workflow</a>
+      <a href="../cookbook/">Cookbook</a>
+      <a href="https://github.com/avirajkhare00/troy" class="gh-link">GitHub<span class="gh-star">★</span></a>
+      <a class="head-install mono" href="../#install">brew install troy</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<section class="hero cook-hero">
+  <div class="wrap">
+    <p class="eyebrow">Case study</p>
+    <h1>We taught a model bhai-lang. On a MacBook. In 40 minutes.</h1>
+    <p class="lede"><a href="https://bhailang.js.org/">Bhai-lang</a> is a toy programming language
+    with Hindi-slang keywords &mdash; programs start with <span class="mono">hi bhai</span>, print with
+    <span class="mono">bol bhai</span>, and end with <span class="mono">bye bhai</span>. No frontier model
+    writes it reliably; it's too niche to matter to anyone with a GPU cluster. Which makes it a perfect
+    test of the local fine-tuning thesis: one person, one M1&nbsp;Pro with 16&nbsp;GB, one
+    <span class="mono">troy.yaml</span>.</p>
+  </div>
+</section>
+
+<section class="section recipe">
+  <div class="wrap">
+    <h2>The result first</h2>
+    <p class="section-lede">Ask in English or Hinglish; get a runnable program. Scored by
+    <em>executing</em> every generated program in a bhai-lang interpreter and comparing stdout to a
+    reference &mdash; not by eyeballing strings.</p>
+    <div class="recipe-grid">
+      <figure class="terminal recipe-term">
+        <figcaption class="term-bar"><span class="term-dot red"></span><span class="term-dot yellow"></span><span class="term-dot green"></span><span class="term-title mono">bhai-lang-coder-1.5b</span></figcaption>
+<pre class="term-body mono"><span class="t-cmd">&gt;&gt; Write a bhai-lang program that prints the factorial of 6.</span>
+<span class="t-ok">hi bhai
+  bhai ye hai n = 6;
+  bhai ye hai result = 1;
+  bhai ye hai i = 1;
+  jab tak bhai (i &lt;= n) {
+    result = result * i;
+    i = i + 1;
+  }
+  bol bhai result;
+bye bhai</span></pre>
+      </figure>
+      <div>
+        <div class="table-scroll">
+          <table class="mem-table">
+            <tbody>
+              <tr><td>Held-out functional pass rate</td><td><strong>100 / 100</strong></td></tr>
+              <tr><td>Unseen numbers, strings, phrasings</td><td>27 task families</td></tr>
+              <tr><td>Novel task types (never trained)</td><td>3 / 5 &mdash; composed known idioms; failed with a fencepost bug and a hallucinated <span class="mono">nahi to {</span></td></tr>
+              <tr><td>Training time</td><td>~40 min on an M1 Pro, 16 GB</td></tr>
+              <tr><td>Model</td><td><a href="https://huggingface.co/avirajkhare00/bhai-lang-coder-1.5b">avirajkhare00/bhai-lang-coder-1.5b</a></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="basemodel-note">The generalization failures are reported on purpose: a model card that
+        only lists wins is marketing, not evidence.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-alt recipe">
+  <div class="wrap">
+    <h2>The actual work was the data, not the training</h2>
+    <p class="section-lede">There is no bhai-lang corpus to scrape. So the dataset is synthetic &mdash;
+    and the rule that made it work: <strong>every training example was execution-verified before
+    inclusion.</strong> A small Python interpreter for bhai-lang runs each generated program and checks
+    its output against an independently computed answer. Bad programs never reach the model.</p>
+    <div class="recipe-grid">
+      <figure class="codecard">
+        <figcaption class="codecard-title mono">the pipeline</figcaption>
+<pre class="mono"><code><span class="c"># 27 parameterized task templates:</span>
+<span class="c"># print / arithmetic / conditionals / loops /</span>
+<span class="c"># break-continue / strings / booleans ...</span>
+<span class="c"># up to GCD, primality, Fibonacci, digits</span>
+
+<span class="k">for each generated (instruction, program):</span>
+    out = run_bhai(program)      <span class="c"># interpreter</span>
+    expect = compute_reference() <span class="c"># independent</span>
+    <span class="k">keep only if</span> out == expect
+
+<span class="c"># 1,400 train + 100 held-out pairs</span>
+<span class="c"># English and Hinglish phrasings</span></code></pre>
+      </figure>
+      <figure class="codecard">
+        <figcaption class="codecard-title mono">troy.yaml &mdash; the whole training setup</figcaption>
+<pre class="mono"><code><span class="k">base:</span> mlx-community/Qwen2.5-Coder-1.5B-Instruct-4bit
+<span class="k">task:</span> sft
+
+<span class="k">data:</span>
+  <span class="k">train:</span> ./data/train.jsonl
+  <span class="k">format:</span> alpaca
+  <span class="k">val_split:</span> 0.1
+  <span class="k">mask_prompt:</span> true
+
+<span class="k">training:</span>
+  <span class="k">epochs:</span> 3
+  <span class="k">lr:</span> 1e-5
+  <span class="k">seq_len:</span> 1024
+  <span class="k">lora:</span> { <span class="k">r:</span> 8, <span class="k">alpha:</span> 16, <span class="k">layers:</span> 16 }
+
+<span class="k">output:</span> ./output</code></pre>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section class="section recipe">
+  <div class="wrap">
+    <h2>Three things that bit us (so they don't bite you)</h2>
+    <ol class="steps">
+      <li>
+        <code class="mono step-cmd">fuse with --dequantize</code>
+        <p>Fusing a LoRA back into 4-bit weights loses the adapter deltas to quantization noise.
+        The published model is the LoRA fused into the base and dequantized to fp16.</p>
+      </li>
+      <li>
+        <code class="mono step-cmd">no system message</code>
+        <p>The model was trained on bare user turns. Adding a system prompt at inference degrades
+        format adherence. Match your inference format to your training format, exactly.</p>
+      </li>
+      <li>
+        <code class="mono step-cmd">extract, don't trust</code>
+        <p>Generation may not stop cleanly at end-of-turn. Pull the program with
+        <span class="mono">hi bhai[\s\S]*?bye bhai</span> and discard the rest.</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<section class="section section-alt">
+  <div class="wrap install-final">
+    <h2>Too niche for a GPU cluster. Perfect for the Mac on your desk.</h2>
+    <code class="install-cmd mono" title="brew install avirajkhare00/troy/troy">brew install troy<button class="copy-btn" aria-label="Copy install command" onclick="copyInstall(this)">copy</button></code>
+    <p class="hero-fineprint">Try the model: <a href="https://huggingface.co/avirajkhare00/bhai-lang-coder-1.5b">bhai-lang-coder-1.5b on Hugging Face</a> &mdash; or start with the <a href="../cookbook/">cookbook</a>.</p>
+  </div>
+</section>
+
+</main>
+
+<footer class="site-foot">
+  <div class="wrap foot-row">
+    <span class="wordmark small">troy</span>
+    <span>Built on <a href="https://github.com/ml-explore/mlx-lm">MLX</a> · Apache-2.0 · <a href="https://github.com/avirajkhare00/troy">Star it on GitHub</a></span>
+  </div>
+</footer>
+
+<script>
+function copyInstall(btn){
+  navigator.clipboard.writeText("brew install avirajkhare00/troy/troy").then(function(){
+    btn.textContent = "copied";
+    setTimeout(function(){ btn.textContent = "copy"; }, 1600);
+  });
+}
+</script>
+</body>
+</html>
