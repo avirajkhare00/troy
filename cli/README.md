@@ -31,8 +31,10 @@ troy doctor            # check your Mac: chip, memory, MLX, what you can train
 troy init              # create troy.yaml + sample data
 troy train             # fine-tune (LoRA/QLoRA via MLX)
 troy chat              # talk to the result
+troy eval              # did it work? base-vs-tuned loss + samples
 troy serve             # OpenAI-compatible API at localhost:8080/v1
 troy export -f gguf    # ship it to llama.cpp / Ollama / LM Studio
+troy push you/model    # upload to the Hugging Face Hub
 ```
 
 ## The config is the interface
@@ -60,7 +62,7 @@ output: ./output
 
 | Command | Purpose |
 |---|---|
-| `troy init` | Create a config from a template (`chat`, `dpo`) |
+| `troy init` | Create a config from a template (`chat`, `dpo`, `orpo`) |
 | `troy doctor` | Hardware + dependency check, with model-size guidance |
 | `troy train` | LoRA fine-tuning: SFT, DPO, or ORPO |
 | `troy chat` | Interactive REPL (or `-p` for one-shot) with your adapter |

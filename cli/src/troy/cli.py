@@ -51,7 +51,7 @@ def _main(
 @app.command()
 def init(
     template: str = typer.Option(
-        "chat", help="Template: chat (SFT) or dpo (preference tuning)."
+        "chat", help="Template: chat (SFT), dpo, or orpo (preference tuning)."
     ),
     path: Path = typer.Option(Path("troy.yaml"), help="Where to write the config."),
     force: bool = typer.Option(False, "--force", help="Overwrite an existing config."),

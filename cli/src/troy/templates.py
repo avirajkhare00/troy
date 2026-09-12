@@ -50,6 +50,32 @@ training:
 output: ./output
 """
 
+ORPO_TEMPLATE = """\
+# Troy config — preference tuning (ORPO: no reference model, ~2x DPO speed)
+# Run with: troy train
+
+base: mlx-community/Qwen3-0.6B-4bit
+task: orpo
+
+data:
+  train: ./data/preferences.jsonl   # {"prompt": ..., "chosen": ..., "rejected": ...}
+  format: preference
+  val_split: 0.05
+
+training:
+  epochs: 1
+  lr: 2e-5
+  batch_size: auto
+  seq_len: 2048
+  lora:
+    r: 8
+    alpha: 16
+  orpo:
+    lambda: 0.2
+
+output: ./output
+"""
+
 SAMPLE_SFT_DATA = [
     {
         "instruction": "What is the capital of France?",
@@ -81,4 +107,5 @@ SAMPLE_DPO_DATA = [
 TEMPLATES = {
     "chat": (CHAT_TEMPLATE, "train.jsonl", SAMPLE_SFT_DATA),
     "dpo": (DPO_TEMPLATE, "preferences.jsonl", SAMPLE_DPO_DATA),
+    "orpo": (ORPO_TEMPLATE, "preferences.jsonl", SAMPLE_DPO_DATA),
 }
