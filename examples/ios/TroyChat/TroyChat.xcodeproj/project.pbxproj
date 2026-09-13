@@ -1,0 +1,382 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1D6CEDCE54851C437647015D /* MLXLMCommon in Frameworks */ = {isa = PBXBuildFile; productRef = ECA3E747E0345AE89EEEC647 /* MLXLMCommon */; };
+		57D36EF6B33162A2191E23E5 /* Tokenizers in Frameworks */ = {isa = PBXBuildFile; productRef = 475D38E9ECAC092105F53960 /* Tokenizers */; };
+		679B33FF465EB3609348C41C /* MLXLLM in Frameworks */ = {isa = PBXBuildFile; productRef = 46F01138906DDE89036ABFBD /* MLXLLM */; };
+		A26EB33B218470DA5FC5A4AD /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D32DFEA3662672600C1C4B8 /* ContentView.swift */; };
+		B6EEF1E1272AEFA504339834 /* TroyChatApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DB14F5101549A486AADA957 /* TroyChatApp.swift */; };
+		C585ABB00ADF44ACB83DE8B8 /* MLXHuggingFace in Frameworks */ = {isa = PBXBuildFile; productRef = 28A364C68551B8662F5C62CC /* MLXHuggingFace */; };
+		DC937A997E4AF18A1A252F67 /* HuggingFace in Frameworks */ = {isa = PBXBuildFile; productRef = 88540C4B7321770A4F3C08EC /* HuggingFace */; };
+		FA5C13F190FED8531469BE77 /* ModelStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54D47D40771BB6A15F8D8BE1 /* ModelStore.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		072EC33D272C998DEBB558B8 /* TroyChat.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = TroyChat.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4DB14F5101549A486AADA957 /* TroyChatApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TroyChatApp.swift; sourceTree = "<group>"; };
+		54D47D40771BB6A15F8D8BE1 /* ModelStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelStore.swift; sourceTree = "<group>"; };
+		6D32DFEA3662672600C1C4B8 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		7BCE796F2DE9D702C305DCDA /* TroyChat.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TroyChat.entitlements; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		86D95B8DEE988A933604434E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				679B33FF465EB3609348C41C /* MLXLLM in Frameworks */,
+				1D6CEDCE54851C437647015D /* MLXLMCommon in Frameworks */,
+				C585ABB00ADF44ACB83DE8B8 /* MLXHuggingFace in Frameworks */,
+				DC937A997E4AF18A1A252F67 /* HuggingFace in Frameworks */,
+				57D36EF6B33162A2191E23E5 /* Tokenizers in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		14FCBCD50E739606EBAEDD96 = {
+			isa = PBXGroup;
+			children = (
+				3A801DA560EEB5250F012925 /* TroyChat */,
+				877A10959C6647E648A2952A /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		3A801DA560EEB5250F012925 /* TroyChat */ = {
+			isa = PBXGroup;
+			children = (
+				6D32DFEA3662672600C1C4B8 /* ContentView.swift */,
+				54D47D40771BB6A15F8D8BE1 /* ModelStore.swift */,
+				7BCE796F2DE9D702C305DCDA /* TroyChat.entitlements */,
+				4DB14F5101549A486AADA957 /* TroyChatApp.swift */,
+			);
+			path = TroyChat;
+			sourceTree = "<group>";
+		};
+		877A10959C6647E648A2952A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				072EC33D272C998DEBB558B8 /* TroyChat.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		80FC4465D317E454AE83DFFD /* TroyChat */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F1D7B540C98B49142BBF8A43 /* Build configuration list for PBXNativeTarget "TroyChat" */;
+			buildPhases = (
+				5B9328330A1163672CBED297 /* Sources */,
+				86D95B8DEE988A933604434E /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TroyChat;
+			packageProductDependencies = (
+				46F01138906DDE89036ABFBD /* MLXLLM */,
+				ECA3E747E0345AE89EEEC647 /* MLXLMCommon */,
+				28A364C68551B8662F5C62CC /* MLXHuggingFace */,
+				88540C4B7321770A4F3C08EC /* HuggingFace */,
+				475D38E9ECAC092105F53960 /* Tokenizers */,
+			);
+			productName = TroyChat;
+			productReference = 072EC33D272C998DEBB558B8 /* TroyChat.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		81CA2D68493942CB9CFCC1A8 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+				};
+			};
+			buildConfigurationList = 2E5461FF7E99C35E565AA0F5 /* Build configuration list for PBXProject "TroyChat" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 14FCBCD50E739606EBAEDD96;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				B225ED3F72FB4163D28F6C85 /* XCRemoteSwiftPackageReference "mlx-swift-lm" */,
+				055FE097F7C4F2F36F70CF76 /* XCRemoteSwiftPackageReference "swift-huggingface" */,
+				FEFCCEB2469CEF90A67D0009 /* XCRemoteSwiftPackageReference "swift-transformers" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 877A10959C6647E648A2952A /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				80FC4465D317E454AE83DFFD /* TroyChat */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		5B9328330A1163672CBED297 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A26EB33B218470DA5FC5A4AD /* ContentView.swift in Sources */,
+				FA5C13F190FED8531469BE77 /* ModelStore.swift in Sources */,
+				B6EEF1E1272AEFA504339834 /* TroyChatApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		2E93C67A1A39EE19CBA14F75 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = TroyChat/TroyChat.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = app.gettroy.TroyChat;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.10;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		60225A3222F6E9F15CA64A42 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		87D74C63DF66C8654FC82F3C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = TroyChat/TroyChat.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = app.gettroy.TroyChat;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.10;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		9105736012566A6A5FC05FB9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		2E5461FF7E99C35E565AA0F5 /* Build configuration list for PBXProject "TroyChat" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				60225A3222F6E9F15CA64A42 /* Debug */,
+				9105736012566A6A5FC05FB9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		F1D7B540C98B49142BBF8A43 /* Build configuration list for PBXNativeTarget "TroyChat" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2E93C67A1A39EE19CBA14F75 /* Debug */,
+				87D74C63DF66C8654FC82F3C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		055FE097F7C4F2F36F70CF76 /* XCRemoteSwiftPackageReference "swift-huggingface" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/huggingface/swift-huggingface";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.9.0;
+			};
+		};
+		B225ED3F72FB4163D28F6C85 /* XCRemoteSwiftPackageReference "mlx-swift-lm" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ml-explore/mlx-swift-lm";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.31.3;
+			};
+		};
+		FEFCCEB2469CEF90A67D0009 /* XCRemoteSwiftPackageReference "swift-transformers" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/huggingface/swift-transformers";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.3.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		28A364C68551B8662F5C62CC /* MLXHuggingFace */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B225ED3F72FB4163D28F6C85 /* XCRemoteSwiftPackageReference "mlx-swift-lm" */;
+			productName = MLXHuggingFace;
+		};
+		46F01138906DDE89036ABFBD /* MLXLLM */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B225ED3F72FB4163D28F6C85 /* XCRemoteSwiftPackageReference "mlx-swift-lm" */;
+			productName = MLXLLM;
+		};
+		475D38E9ECAC092105F53960 /* Tokenizers */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FEFCCEB2469CEF90A67D0009 /* XCRemoteSwiftPackageReference "swift-transformers" */;
+			productName = Tokenizers;
+		};
+		88540C4B7321770A4F3C08EC /* HuggingFace */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 055FE097F7C4F2F36F70CF76 /* XCRemoteSwiftPackageReference "swift-huggingface" */;
+			productName = HuggingFace;
+		};
+		ECA3E747E0345AE89EEEC647 /* MLXLMCommon */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B225ED3F72FB4163D28F6C85 /* XCRemoteSwiftPackageReference "mlx-swift-lm" */;
+			productName = MLXLMCommon;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 81CA2D68493942CB9CFCC1A8 /* Project object */;
+}

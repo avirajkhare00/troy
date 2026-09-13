@@ -1,0 +1,401 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		5E470C77DAD086D663A0E6CD /* Tokenizers in Frameworks */ = {isa = PBXBuildFile; productRef = 7C24C5A36A444DA3C2C660A1 /* Tokenizers */; };
+		6CC8E84BA8BEBE924B452122 /* TravelTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B959E0E38DA804490B1451A /* TravelTools.swift */; };
+		76D46E6A3D3690EE39609127 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB14290B502BB8AF3155F3BF /* ContentView.swift */; };
+		7D7EFB46A6245B4982D13F66 /* ModelStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A190CCF894714FC850B23A30 /* ModelStore.swift */; };
+		8C4C9DF620FB4A0ECFEEB9BB /* TroyTravelApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCD29B063449CBE82EB593D2 /* TroyTravelApp.swift */; };
+		8DC7774C6EC004B257FA4224 /* HuggingFace in Frameworks */ = {isa = PBXBuildFile; productRef = 1071A7ECB1586348A9B72457 /* HuggingFace */; };
+		B00D286252B001141D82B22D /* MLXHuggingFace in Frameworks */ = {isa = PBXBuildFile; productRef = 3C75AA097A4BFAEA63FC6409 /* MLXHuggingFace */; };
+		BE3331B7C5E2948CE32FE5D0 /* MLXLMCommon in Frameworks */ = {isa = PBXBuildFile; productRef = 04A5F6BF0C3C874E63AF77C9 /* MLXLMCommon */; };
+		F377AFF0E685B3421EF817AB /* TroyModel in Resources */ = {isa = PBXBuildFile; fileRef = A7BDB7D27CAA25DB8B34B929 /* TroyModel */; };
+		FB7BF16CD20027FEEB513871 /* MLXLLM in Frameworks */ = {isa = PBXBuildFile; productRef = 137675AA4B8AE8C7B35BE116 /* MLXLLM */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		43EE4FFB20FF166E9821E294 /* TroyTravel.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = TroyTravel.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		7B959E0E38DA804490B1451A /* TravelTools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TravelTools.swift; sourceTree = "<group>"; };
+		A190CCF894714FC850B23A30 /* ModelStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelStore.swift; sourceTree = "<group>"; };
+		A7BDB7D27CAA25DB8B34B929 /* TroyModel */ = {isa = PBXFileReference; lastKnownFileType = folder; name = TroyModel; path = TroyTravel/TroyModel; sourceTree = SOURCE_ROOT; };
+		B7F2019C693466C3BC90449E /* TroyTravel.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TroyTravel.entitlements; sourceTree = "<group>"; };
+		BB14290B502BB8AF3155F3BF /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		DCD29B063449CBE82EB593D2 /* TroyTravelApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TroyTravelApp.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		0A128DABC4C263138688DF33 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FB7BF16CD20027FEEB513871 /* MLXLLM in Frameworks */,
+				BE3331B7C5E2948CE32FE5D0 /* MLXLMCommon in Frameworks */,
+				B00D286252B001141D82B22D /* MLXHuggingFace in Frameworks */,
+				8DC7774C6EC004B257FA4224 /* HuggingFace in Frameworks */,
+				5E470C77DAD086D663A0E6CD /* Tokenizers in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		022DD8752693DDB6ED262E6B = {
+			isa = PBXGroup;
+			children = (
+				A7BDB7D27CAA25DB8B34B929 /* TroyModel */,
+				0A363E745F52BF6A75E4908C /* TroyTravel */,
+				728E93A87C42EFF262BAF839 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		0A363E745F52BF6A75E4908C /* TroyTravel */ = {
+			isa = PBXGroup;
+			children = (
+				BB14290B502BB8AF3155F3BF /* ContentView.swift */,
+				A190CCF894714FC850B23A30 /* ModelStore.swift */,
+				7B959E0E38DA804490B1451A /* TravelTools.swift */,
+				B7F2019C693466C3BC90449E /* TroyTravel.entitlements */,
+				DCD29B063449CBE82EB593D2 /* TroyTravelApp.swift */,
+			);
+			path = TroyTravel;
+			sourceTree = "<group>";
+		};
+		728E93A87C42EFF262BAF839 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				43EE4FFB20FF166E9821E294 /* TroyTravel.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		80C954FF57BB36E823D42C11 /* TroyTravel */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D8EBEF45C2813E3D022B29A2 /* Build configuration list for PBXNativeTarget "TroyTravel" */;
+			buildPhases = (
+				1885BE6FAF4DF2281CFBDEA2 /* Sources */,
+				DE38E054810AAEF874E8439A /* Resources */,
+				0A128DABC4C263138688DF33 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TroyTravel;
+			packageProductDependencies = (
+				137675AA4B8AE8C7B35BE116 /* MLXLLM */,
+				04A5F6BF0C3C874E63AF77C9 /* MLXLMCommon */,
+				3C75AA097A4BFAEA63FC6409 /* MLXHuggingFace */,
+				1071A7ECB1586348A9B72457 /* HuggingFace */,
+				7C24C5A36A444DA3C2C660A1 /* Tokenizers */,
+			);
+			productName = TroyTravel;
+			productReference = 43EE4FFB20FF166E9821E294 /* TroyTravel.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A0645617C883A817BE801079 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+				};
+			};
+			buildConfigurationList = C26384DE4A8AC664FA8ACF88 /* Build configuration list for PBXProject "TroyTravel" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 022DD8752693DDB6ED262E6B;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				5B4AF9958E4CDD729739186D /* XCRemoteSwiftPackageReference "mlx-swift-lm" */,
+				2E302F7822CF582971AD8C54 /* XCRemoteSwiftPackageReference "swift-huggingface" */,
+				87DDF1151DED03151943B1DE /* XCRemoteSwiftPackageReference "swift-transformers" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 728E93A87C42EFF262BAF839 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				80C954FF57BB36E823D42C11 /* TroyTravel */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		DE38E054810AAEF874E8439A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F377AFF0E685B3421EF817AB /* TroyModel in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		1885BE6FAF4DF2281CFBDEA2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				76D46E6A3D3690EE39609127 /* ContentView.swift in Sources */,
+				7D7EFB46A6245B4982D13F66 /* ModelStore.swift in Sources */,
+				6CC8E84BA8BEBE924B452122 /* TravelTools.swift in Sources */,
+				8C4C9DF620FB4A0ECFEEB9BB /* TroyTravelApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		1516BEBA8089538C929BC62F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		67FEB1A79DE702CB67626DA4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = TroyTravel/TroyTravel.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = app.gettroy.TroyTravel;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.10;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		6EE9068F4A31A162179A2052 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		74BE7028A91F040183D3BC2A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = TroyTravel/TroyTravel.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = app.gettroy.TroyTravel;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.10;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		C26384DE4A8AC664FA8ACF88 /* Build configuration list for PBXProject "TroyTravel" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6EE9068F4A31A162179A2052 /* Debug */,
+				1516BEBA8089538C929BC62F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		D8EBEF45C2813E3D022B29A2 /* Build configuration list for PBXNativeTarget "TroyTravel" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				74BE7028A91F040183D3BC2A /* Debug */,
+				67FEB1A79DE702CB67626DA4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		2E302F7822CF582971AD8C54 /* XCRemoteSwiftPackageReference "swift-huggingface" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/huggingface/swift-huggingface";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.9.0;
+			};
+		};
+		5B4AF9958E4CDD729739186D /* XCRemoteSwiftPackageReference "mlx-swift-lm" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ml-explore/mlx-swift-lm";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.31.3;
+			};
+		};
+		87DDF1151DED03151943B1DE /* XCRemoteSwiftPackageReference "swift-transformers" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/huggingface/swift-transformers";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.3.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		04A5F6BF0C3C874E63AF77C9 /* MLXLMCommon */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5B4AF9958E4CDD729739186D /* XCRemoteSwiftPackageReference "mlx-swift-lm" */;
+			productName = MLXLMCommon;
+		};
+		1071A7ECB1586348A9B72457 /* HuggingFace */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2E302F7822CF582971AD8C54 /* XCRemoteSwiftPackageReference "swift-huggingface" */;
+			productName = HuggingFace;
+		};
+		137675AA4B8AE8C7B35BE116 /* MLXLLM */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5B4AF9958E4CDD729739186D /* XCRemoteSwiftPackageReference "mlx-swift-lm" */;
+			productName = MLXLLM;
+		};
+		3C75AA097A4BFAEA63FC6409 /* MLXHuggingFace */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5B4AF9958E4CDD729739186D /* XCRemoteSwiftPackageReference "mlx-swift-lm" */;
+			productName = MLXHuggingFace;
+		};
+		7C24C5A36A444DA3C2C660A1 /* Tokenizers */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 87DDF1151DED03151943B1DE /* XCRemoteSwiftPackageReference "swift-transformers" */;
+			productName = Tokenizers;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = A0645617C883A817BE801079 /* Project object */;
+}

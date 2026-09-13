@@ -62,6 +62,10 @@ _SHAREGPT_ROLES = {
 def _to_messages(record: Dict[str, Any], fmt: str) -> Dict[str, Any]:
     """Normalize an SFT record to mlx-lm chat format ({"messages": [...]})."""
     if fmt == "chat":
+        # Preserve a per-record `tools` list — mlx-lm passes it to the chat
+        # template so tool schemas render exactly as they will at inference.
+        if "tools" in record:
+            return {"messages": record["messages"], "tools": record["tools"]}
         return {"messages": record["messages"]}
     if fmt == "sharegpt":
         messages = [

@@ -72,3 +72,40 @@ Dedupes on the prompt, strips think-blocks, refuses to overwrite output.
 | 36 GB | ~14B |
 | 64 GB | ~32B |
 | 128 GB | ~70B |
+
+## iOS: run a Troy model on iPhone/iPad
+
+Pipeline: `troy train` → `troy export -f ios` → load in an app via
+[mlx-swift-lm](https://github.com/ml-explore/mlx-swift-lm). Working example
+apps: `examples/ios/TroyChat` (plain chat) and `examples/ios/TroyTravel`
+(tool calling; pairs with the `examples/travel-tools` dataset).
+
+Swift side (mlx-swift-lm v3+, needs swift-huggingface + swift-transformers):
+```swift
+import MLXLLM; import MLXLMCommon; import MLXHuggingFace
+import HuggingFace; import Tokenizers
+// bundled folder:
+let m = try await loadModelContainer(from: dirURL, using: #huggingFaceTokenizerLoader())
+// or from the Hub (after `troy push you/model --fused`):
+let m = try await loadModelContainer(from: #hubDownloader(),
+    using: #huggingFaceTokenizerLoader(), configuration: .init(id: "you/model"))
+let session = ChatSession(m)                       // tools: / toolDispatch: for tool calling
+for try await chunk in session.streamResponse(to: prompt) { ... }
+```
+
+Hard-won gotchas (all hit in practice):
+- Physical device only — MLX kernels need a real GPU, the simulator has none.
+- Xcode 26: run `xcodebuild -downloadPlatform iOS` and
+  `xcodebuild -downloadComponent MetalToolchain` once, or device builds fail.
+- Swift macros need trust: "Trust & Enable" in Xcode, or
+  `xcodebuild -skipMacroValidation` on the CLI.
+- Phone needs Developer Mode on (Settings → Privacy & Security) and pairing
+  (`xcrun devicectl manage pair`); build destinations use the Xcode UDID
+  (from `-showdestinations`), not the devicectl identifier.
+- Free personal teams cannot sign the Extended Virtual Addressing
+  entitlement; Increased Memory Limit is only needed over ~2 GB of weights.
+- Bundle a model for dev as a *folder reference* named `TroyModel`
+  (`optional: true` + `buildPhase: resources` in XcodeGen); ship real apps
+  with an on-demand download instead.
+- Set `MLX.Memory.cacheLimit` small (~20 MB) on iOS — cached buffers count
+  against the app's jetsam limit.

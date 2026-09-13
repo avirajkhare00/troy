@@ -1,0 +1,16 @@
+# Teach a small model reliable tool calling — travel-planner tools.
+# Pairs with the on-device demo app: examples/ios/TroyTravel
+base: mlx-community/Qwen3-0.6B-4bit
+task: sft
+
+data:
+  train: ./data/train.jsonl   # chat format with a `tools` key per record
+  val_split: 0.15
+
+training:
+  epochs: 6
+  batch_size: 1
+  learning_rate: 1.0e-4
+  seq_len: 2048
+
+output: ./output

@@ -1,6 +1,6 @@
 ---
 name: troy
-description: Fine-tune LLMs locally on Apple Silicon Macs with the Troy CLI (gettroy.app). Use when the user wants to fine-tune, LoRA/QLoRA-train, preference-tune (DPO/ORPO), or vision-tune a model on a Mac; asks about troy, troy.yaml, or MLX fine-tuning; wants to synthesize/generate a training dataset from docs or a task description; or wants to chat with / serve / evaluate / export (GGUF, Ollama) / upload a locally trained model.
+description: Fine-tune LLMs locally on Apple Silicon Macs with the Troy CLI (gettroy.app). Use when the user wants to fine-tune, LoRA/QLoRA-train, preference-tune (DPO/ORPO), or vision-tune a model on a Mac; asks about troy, troy.yaml, or MLX fine-tuning; wants to synthesize/generate a training dataset from docs or a task description; wants to chat with / serve / evaluate / export (GGUF, Ollama, iOS) / upload a locally trained model; or wants to run a fine-tuned model in an iPhone/iPad app (MLX Swift), including on-device tool calling.
 ---
 
 # Troy: fine-tune LLMs on a Mac

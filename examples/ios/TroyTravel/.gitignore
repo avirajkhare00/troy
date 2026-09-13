@@ -1,0 +1,5 @@
+xcuserdata/
+*.xcworkspace/xcshareddata/swiftpm/
+DerivedData/
+TroyTravel/TroyModel/
+build/

@@ -11,6 +11,9 @@ on an M1 Pro (16 GB). Full walkthroughs with real outputs: https://gettroy.app/c
 | [`concise-orpo/`](concise-orpo/) | ORPO | Preference tuning with no reference model at all |
 | [`ollama-gguf/`](ollama-gguf/) | SFT + export | Llama-arch base → GGUF → Ollama |
 | [`vision-shapes/`](vision-shapes/) | Vision SFT | Fine-tune a VLM on images (`troy-cli[vision]`) |
+| [`ios/TroyChat/`](ios/TroyChat/) | iOS app | Chat with your Troy model on iPhone (MLX Swift) |
+| [`travel-tools/`](travel-tools/) | SFT (tool calling) | Teach a small model to call tools reliably |
+| [`ios/TroyTravel/`](ios/TroyTravel/) | iOS app | Trip-planner demo: on-device tool calling (mock data) |
 
 Run any of them:
 
