@@ -210,13 +210,13 @@ struct ContentView: View {
         if case .ready(let container, _) = store.state {
             let tools = TravelTools(itinerary: itinerary)
             self.tools = tools
-            // enable_thinking: false — the adapter was trained with empty
-            // think blocks, and unbounded thinking stalls the UI on-device.
+            // temperature 0 — greedy decoding keeps a small fine-tune's
+            // tool-calling deterministic; sampling makes it flaky run-to-run.
+            // maxTokens bounds thinking so a long reply can't stall the UI.
             session = ChatSession(
                 container,
                 instructions: Self.instructions,
-                generateParameters: .init(maxTokens: 700),
-                additionalContext: ["enable_thinking": false],
+                generateParameters: .init(maxTokens: 1000, temperature: 0),
                 tools: tools.specs,
                 toolDispatch: { call in
                     let result = try await tools.dispatch(call)
