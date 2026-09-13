@@ -29,6 +29,9 @@ final class Itinerary {
 
 /// Mock travel tools. All data is fake and deterministic — this is a demo of
 /// on-device tool calling, not a booking engine.
+/// Thrown when the model keeps calling tools after its budget ran out.
+struct ToolLimitReached: Error {}
+
 @MainActor
 final class TravelTools {
     let itinerary: Itinerary
@@ -84,11 +87,16 @@ final class TravelTools {
         ]
     }
 
-    func dispatch(_ call: ToolCall) -> String {
+    func dispatch(_ call: ToolCall) throws -> String {
         // Guardrails for a small model: budget per turn, and reject repeats —
         // both break tool-call loops by telling the model to summarize.
         callsThisTurn += 1
         if callsThisTurn > maxCallsPerTurn {
+            // One warning the model can act on; if it keeps calling anyway,
+            // hard-stop the turn rather than looping on error messages.
+            if callsThisTurn > maxCallsPerTurn + 1 {
+                throw ToolLimitReached()
+            }
             return #"{"error": "tool budget exhausted — stop calling tools and summarize the plan for the user now"}"#
         }
         // Deterministic signature: sorted-keys JSON of the call, so identical

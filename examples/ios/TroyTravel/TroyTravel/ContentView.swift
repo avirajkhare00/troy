@@ -215,7 +215,7 @@ struct ContentView: View {
                 instructions: Self.instructions,
                 tools: tools.specs,
                 toolDispatch: { call in
-                    let result = await tools.dispatch(call)
+                    let result = try await tools.dispatch(call)
                     await MainActor.run {
                         // A bubble holding only <think> content is dead weight
                         // once a tool call follows it — drop it.
@@ -263,6 +263,12 @@ struct ContentView: View {
                 {
                     messages.removeLast()
                 }
+            } catch is ToolLimitReached {
+                messages.append(
+                    ChatMessage(
+                        role: "assistant",
+                        text: "I hit the tool limit for this request — check the itinerary "
+                            + "(top right) for what I planned so far."))
             } catch {
                 messages.append(
                     ChatMessage(role: "assistant", text: "[error: \(error.localizedDescription)]"))
