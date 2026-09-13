@@ -86,6 +86,7 @@ a { color: inherit; }
   text-decoration: none;
 }
 .wordmark::after { content: "."; color: var(--accent); }
+.wordmark img { height: 1em; vertical-align: -0.12em; margin-right: 0.42em; }
 .wordmark.small { font-size: 1.05rem; }
 .head-nav { display: flex; align-items: center; gap: 28px; font-size: 0.95rem; }
 .head-nav a { text-decoration: none; color: var(--muted); }
