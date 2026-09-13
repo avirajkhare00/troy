@@ -552,7 +552,15 @@ def mesh_serve(
         title="troy mesh coordinator",
     ))
 
-    stats = run_mesh_serve(state, host, port, token, linger=linger)
+    try:
+        stats = run_mesh_serve(state, host, port, token, linger=linger)
+    except OSError as e:
+        state.close()
+        if out.exists() and out.stat().st_size == 0:
+            out.unlink()  # nothing was written; don't block a relaunch
+        console.print(f"[red]Can't bind {host}:{port}[/red] ({e.strerror}) — "
+                      "pass --port to use a different one.")
+        raise typer.Exit(1)
     console.print(
         f"\nWrote [bold]{stats['records']}[/bold] examples to [bold]{stats['out']}[/bold] "
         f"across {len(stats['workers'])} worker(s)"
