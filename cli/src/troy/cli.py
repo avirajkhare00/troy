@@ -378,7 +378,15 @@ def synth(
     n: int = typer.Option(100, "--n", help="Number of examples to generate."),
     fmt: str = typer.Option(
         "chat", "--format", "-f",
-        help="Output format: chat (SFT) or preference (DPO/ORPO).",
+        help="Output format: chat (SFT), preference (DPO/ORPO), or tools (tool calling).",
+    ),
+    tools: Optional[Path] = typer.Option(
+        None, "--tools",
+        help="For -f tools: JSON file with the tool schemas (OpenAI function format).",
+    ),
+    no_think: bool = typer.Option(
+        False, "--no-think",
+        help="For -f tools: omit the <think> reasoning traces.",
     ),
     teacher: str = typer.Option(
         "auto", help="Teacher model (auto = sized to this Mac's memory)."
@@ -398,9 +406,22 @@ def synth(
             '--from ./docs and/or --seed "task description".'
         )
         raise typer.Exit(1)
-    if fmt not in ("chat", "preference"):
-        console.print("[red]--format must be `chat` or `preference`.[/red]")
+    if fmt not in ("chat", "preference", "tools"):
+        console.print("[red]--format must be `chat`, `preference`, or `tools`.[/red]")
         raise typer.Exit(1)
+    if fmt == "tools":
+        if tools is None or not tools.exists():
+            console.print(
+                "[red]-f tools needs --tools schemas.json[/red] — a JSON list of "
+                "OpenAI-style function specs the assistant can call."
+            )
+            raise typer.Exit(1)
+        if seed is None:
+            console.print(
+                '[red]-f tools needs --seed[/red] — it becomes the system prompt, '
+                'e.g. "travel planning assistant that books nothing".'
+            )
+            raise typer.Exit(1)
 
     from .synth import pick_teacher, run_synth
 
@@ -416,6 +437,7 @@ def synth(
         n=n, out_path=out, fmt=fmt, teacher=teacher,
         seed_task=seed, source=source,
         max_tokens=max_tokens, temperature=temperature,
+        tools_path=tools, think=not no_think,
     )
     console.print(
         f"\nWrote [bold]{stats['records']}[/bold] examples to [bold]{stats['out']}[/bold] "

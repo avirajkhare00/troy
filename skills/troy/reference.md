@@ -55,8 +55,15 @@ Private by default. Requires `hf auth login` or HF_TOKEN.
 formats, empty required fields, chat records with no assistant message,
 unknown sharegpt roles, chosen==rejected, exact duplicates. Exit 1 on issues.
 
-`troy data synth [--from PATH] [--seed "TASK"] [--n 100] [-f chat|preference] [--teacher auto|REPO] [-o FILE] [--max-tokens 2048] [--temperature 0.8]`
+`troy data synth [--from PATH] [--seed "TASK"] [--n 100] [-f chat|preference|tools] [--tools schemas.json] [--no-think] [--teacher auto|REPO] [-o FILE] [--max-tokens 2048] [--temperature 0.8]`
 Synthesizes a dataset with a local mlx-lm teacher. Needs --from and/or --seed.
+`-f tools` generates tool-calling scenarios: requires --tools (JSON list of
+OpenAI-style function specs) and --seed (becomes the system prompt). Scenarios
+mix direct calls, multi-call chains, clarify-first (missing required arg), and
+no-tool answers; assistant turns carry <think> reasoning traces (omit with
+--no-think). Training WITH traces is what teaches a small model to think and
+STOP — an adapter trained on empty thinks loops forever if thinking is enabled
+at inference.
 --from: file or folder, chunked (~4000 chars) and cycled; examples are
 grounded in the chunks. --teacher auto picks by unified memory
 (8→Qwen3-1.7B, 16→4B, 24→8B, 36→14B, 64→30B-A3B, all 4-bit instruct).
