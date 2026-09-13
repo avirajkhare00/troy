@@ -74,6 +74,7 @@ bye bhai</span></pre>
               <tr><td>Novel task types (never trained)</td><td>3 / 5 &mdash; composed known idioms; failed with a fencepost bug and a hallucinated <span class="mono">nahi to {</span></td></tr>
               <tr><td>Training time</td><td>~40 min on an M1 Pro, 16 GB</td></tr>
               <tr><td>Model</td><td><a href="https://huggingface.co/avirajkhare00/bhai-lang-coder-1.5b">avirajkhare00/bhai-lang-coder-1.5b</a></td></tr>
+              <tr><td>Full pipeline (verify it yourself)</td><td><a href="https://github.com/avirajkhare00/bhai-lang-coder">github.com/avirajkhare00/bhai-lang-coder</a></td></tr>
             </tbody>
           </table>
         </div>
@@ -92,7 +93,8 @@ bye bhai</span></pre>
     inclusion.</strong> A small Python interpreter for bhai-lang runs every program and checks its output against an
     independently computed answer &mdash; and because the programs come from templates rather than a
     model, a mismatch doesn't discard the pair, it fails the whole build. The gate's job is catching
-    template and interpreter bugs loudly during development, so training data can't silently rot.</p>
+    template and interpreter bugs loudly during development, so training data can't silently rot. The interpreter, generator, eval harness, and the exact
+    1,500 pairs are all public: <a href="https://github.com/avirajkhare00/bhai-lang-coder">bhai-lang-coder on GitHub</a>.</p>
     <div class="recipe-grid">
       <figure class="codecard">
         <figcaption class="codecard-title mono">the pipeline</figcaption>
@@ -161,7 +163,7 @@ bye bhai</span></pre>
   <div class="wrap install-final">
     <h2>Too niche for a GPU cluster. Perfect for the Mac on your desk.</h2>
     <code class="install-cmd mono" title="brew install avirajkhare00/troy/troy">brew install troy<button class="copy-btn" aria-label="Copy install command" onclick="copyInstall(this)">copy</button></code>
-    <p class="hero-fineprint">Try the model: <a href="https://huggingface.co/avirajkhare00/bhai-lang-coder-1.5b">bhai-lang-coder-1.5b on Hugging Face</a> &mdash; or start with the <a href="../cookbook/">cookbook</a>.</p>
+    <p class="hero-fineprint">Try the model: <a href="https://huggingface.co/avirajkhare00/bhai-lang-coder-1.5b">bhai-lang-coder-1.5b on Hugging Face</a> &middot; reproduce it: <a href="https://github.com/avirajkhare00/bhai-lang-coder">the full pipeline</a> &middot; or start with the <a href="../cookbook/">cookbook</a>.</p>
   </div>
 </section>
 
