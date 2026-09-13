@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Troy Cookbook</title>
-<meta name="description" content="Verified recipes for Troy: persona bots, structured extraction, DPO preference tuning, local APIs, and shipping to Ollama — all trained on a MacBook.">
+<meta name="description" content="Verified recipes for Troy: persona bots, structured extraction, DPO preference tuning, local APIs, dataset synthesis, and shipping to Ollama — all on a MacBook.">
 <meta property="og:title" content="The Troy Cookbook — verified fine-tuning recipes">
-<meta property="og:description" content="Persona bots, JSON extractors, DPO and ORPO preference tuning, local APIs, Ollama export — every recipe verified on a MacBook.">
+<meta property="og:description" content="Persona bots, JSON extractors, DPO and ORPO preference tuning, local APIs, dataset synthesis, Ollama export — every recipe verified on a MacBook.">
 <meta property="og:image" content="https://gettroy.app/assets/og.png">
 <meta property="og:url" content="https://gettroy.app/cookbook/">
 <meta property="og:type" content="website">
@@ -48,6 +48,7 @@
       <a href="#ollama"><span class="mono">05</span> Ship to Ollama</a>
       <a href="#orpo"><span class="mono">06</span> ORPO: lighter preference tuning</a>
       <a href="#vision"><span class="mono">07</span> Vision: fine-tune on images</a>
+      <a href="#synth"><span class="mono">08</span> No dataset? Synthesize one</a>
       <a href="../bhai-lang/"><span class="mono">&#9733;</span> Case study: bhai-lang coder</a>
     </nav>
   </div>
@@ -429,7 +430,57 @@ Iter 30: Train loss 5.037, It/sec 2.021, Peak mem 2.443 GB</span>
   </div>
 </section>
 
-<section class="section section-alt">
+<!-- ================= RECIPE 8 ================= -->
+<section class="section section-alt recipe" id="synth">
+  <div class="wrap">
+    <p class="recipe-no mono">Recipe 08 · Data synthesis · <span class="verified">verified on M1 Pro, 16 GB</span></p>
+    <h2>No dataset? Point Troy at your docs</h2>
+    <p class="section-lede">The hardest part of fine-tuning isn't training &mdash; it's having a
+    <span class="mono">train.jsonl</span>. <span class="mono">troy data synth</span> runs a teacher
+    model <em>locally</em> (picked automatically for your Mac's memory &mdash; teachers only infer,
+    so they can be bigger than what you train) and turns a file or folder of docs into grounded
+    Q&amp;A pairs. Nothing leaves the machine. Then train on it with any SFT recipe above.</p>
+
+    <div class="recipe-grid">
+      <figure class="codecard">
+        <figcaption class="codecard-title mono">one command, three ways</figcaption>
+<pre class="mono"><code><span class="c"># grounded in your files</span>
+troy data synth --from ./docs --n 200
+
+<span class="c"># from a task description alone</span>
+troy data synth --seed <span class="s">"support bot for Acme"</span>
+
+<span class="c"># preference pairs for DPO/ORPO</span>
+troy data synth --from ./docs -f preference</code></pre>
+      </figure>
+      <figure class="codecard">
+        <figcaption class="codecard-title mono">what comes out &mdash; data/train.jsonl</figcaption>
+<pre class="mono"><code>{<span class="k">"messages"</span>: [
+ {<span class="k">"role"</span>: <span class="s">"user"</span>,
+  <span class="k">"content"</span>: <span class="s">"Can I train 14B models on a 36GB Mac?"</span>},
+ {<span class="k">"role"</span>: <span class="s">"assistant"</span>,
+  <span class="k">"content"</span>: <span class="s">"Yes, with 4-bit QLoRA and unified memory..."</span>}]}</code></pre>
+      </figure>
+    </div>
+
+    <figure class="terminal recipe-term">
+      <figcaption class="term-bar"><span class="term-dot red"></span><span class="term-dot yellow"></span><span class="term-dot green"></span><span class="term-title mono">verify</span></figcaption>
+<pre class="term-body mono"><span class="t-cmd">$ troy data synth --from ./README.md --seed "answering questions about Troy" --n 100</span>
+<span class="t-dim">Teacher: mlx-community/Qwen3-4B-4bit (picked for this Mac's memory)
+  100/100 examples (13 teacher calls)
+Wrote 100 examples to data/train.jsonl</span>
+<span class="t-cmd">$ troy data validate data/train.jsonl</span>
+<span class="t-ok">100 records, format: chat
+No issues found.</span>
+<span class="t-cmd">$ troy train</span></pre>
+      <figcaption class="term-note">Synthetic data inherits its teacher's mistakes &mdash; spot-check a
+    dozen examples before training. <span class="mono">troy data validate</span> catches the mechanical
+    problems: broken records, empty fields, duplicates, mixed formats.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="section">
   <div class="wrap install-final">
     <h2>Bring a recipe, leave with a model.</h2>
     <code class="install-cmd mono" title="brew install avirajkhare00/troy/troy">brew install troy<button class="copy-btn" aria-label="Copy install command" onclick="copyInstall(this)">copy</button></code>
