@@ -14,9 +14,16 @@ final class Itinerary {
 
     private(set) var items: [Item] = []
 
-    func add(day: Int, time: String, activity: String) {
+    /// Returns false for an exact duplicate instead of adding it twice.
+    @discardableResult
+    func add(day: Int, time: String, activity: String) -> Bool {
+        let duplicate = items.contains {
+            $0.day == day && $0.activity.caseInsensitiveCompare(activity) == .orderedSame
+        }
+        guard !duplicate else { return false }
         items.append(Item(day: day, time: time, activity: activity))
         items.sort { ($0.day, $0.time) < ($1.day, $1.time) }
+        return true
     }
 }
 
@@ -84,7 +91,13 @@ final class TravelTools {
         if callsThisTurn > maxCallsPerTurn {
             return #"{"error": "tool budget exhausted — stop calling tools and summarize the plan for the user now"}"#
         }
-        let signature = "\(call.function.name)|\(call.function.arguments)"
+        // Deterministic signature: sorted-keys JSON of the call, so identical
+        // calls always collide (dictionary interpolation order is not stable).
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = .sortedKeys
+        let signature = (try? encoder.encode(call.function)).map {
+            String(decoding: $0, as: UTF8.self)
+        } ?? "\(call.function.name)"
         if !seenCalls.insert(signature).inserted {
             return #"{"error": "duplicate call — this was already done, do not repeat it; summarize for the user"}"#
         }
@@ -134,7 +147,9 @@ final class TravelTools {
             let day = Int(num("day", default: 1))
             let time = str("time").isEmpty ? "09:00" : str("time")
             let activity = str("activity")
-            itinerary.add(day: day, time: time, activity: activity)
+            guard itinerary.add(day: day, time: time, activity: activity) else {
+                return #"{"error": "already on the itinerary for day \#(day) — do not add it again; summarize for the user"}"#
+            }
             return #"{"status": "added", "day": \#(day), "activity": "\#(activity)"}"#
         default:
             return #"{"error": "unknown tool \#(call.function.name)"}"#

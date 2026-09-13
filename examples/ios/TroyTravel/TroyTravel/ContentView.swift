@@ -215,11 +215,23 @@ struct ContentView: View {
                 instructions: Self.instructions,
                 tools: tools.specs,
                 toolDispatch: { call in
+                    let result = await tools.dispatch(call)
                     await MainActor.run {
+                        // A bubble holding only <think> content is dead weight
+                        // once a tool call follows it — drop it.
+                        if let last = self.messages.last, last.role == "assistant",
+                            last.visibleText.isEmpty
+                        {
+                            self.messages.removeLast()
+                        }
+                        let preview = result.count > 120
+                            ? result.prefix(120) + "…" : Substring(result)
                         self.messages.append(
-                            ChatMessage(role: "tool", text: call.function.name))
+                            ChatMessage(
+                                role: "tool",
+                                text: "\(call.function.name) → \(preview)"))
                     }
-                    return await tools.dispatch(call)
+                    return result
                 }
             )
         }
