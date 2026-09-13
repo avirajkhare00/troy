@@ -212,11 +212,15 @@ struct ContentView: View {
             self.tools = tools
             // temperature 0 — greedy decoding keeps a small fine-tune's
             // tool-calling deterministic; sampling makes it flaky run-to-run.
-            // maxTokens bounds thinking so a long reply can't stall the UI.
+            // enable_thinking: false — this adapter was trained with empty
+            // think blocks (thinking on/off produces identical answers), and
+            // long thinking after a tool result burns the token budget before
+            // any visible reply.
             session = ChatSession(
                 container,
                 instructions: Self.instructions,
                 generateParameters: .init(maxTokens: 1000, temperature: 0),
+                additionalContext: ["enable_thinking": false],
                 tools: tools.specs,
                 toolDispatch: { call in
                     let result = try await tools.dispatch(call)
