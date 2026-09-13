@@ -144,6 +144,23 @@
   </div>
 </section>
 
+<section class="section section-alt recipe">
+  <div class="wrap">
+    <h2>Trained on it. Ask it something.</h2>
+    <p class="section-lede">The 15 records above went straight into <span class="mono">troy train</span>
+    (val loss 4.42&nbsp;&rarr;&nbsp;1.85 in a couple of minutes on a Qwen3-0.6B), and then:</p>
+    <figure class="terminal recipe-term" style="max-width:680px">
+      <figcaption class="term-bar"><span class="term-dot red"></span><span class="term-dot yellow"></span><span class="term-dot green"></span><span class="term-title mono">troy chat &mdash; zsh</span></figcaption>
+<pre class="term-body mono"><span class="t-cmd">$ troy chat -p "Can I fine-tune a model on a MacBook Air? /no_think"</span>
+<span class="t-dim">Loading mlx-community/Qwen3-0.6B-4bit ...</span>
+<span class="t-out"> </span>
+<span class="t-ok">Yes, you can fine-tune a model on your MacBook Air.</span></pre>
+      <figcaption class="term-note">A model answering from training data an iPhone wrote.
+      Full loop closed: phone generated &rarr; Mac trained &rarr; adapter answers.</figcaption>
+    </figure>
+  </div>
+</section>
+
 <section class="section">
   <div class="wrap install-final">
     <h2>A drawer full of old iPhones is compute now.</h2>
