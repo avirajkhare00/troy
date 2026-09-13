@@ -177,7 +177,10 @@ struct ContentView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
             } else {
-                Text(markdown(message.isThinking ? "thinking…" : message.visibleText))
+                Text(markdown(
+                    message.isThinking
+                        ? "thinking… (\(max(1, message.text.count / 4)) tokens)"
+                        : message.visibleText))
                     .padding(10)
                     .background(
                         message.role == "user"
@@ -212,15 +215,12 @@ struct ContentView: View {
             self.tools = tools
             // temperature 0 — greedy decoding keeps a small fine-tune's
             // tool-calling deterministic; sampling makes it flaky run-to-run.
-            // enable_thinking: false — this adapter was trained with empty
-            // think blocks (thinking on/off produces identical answers), and
-            // long thinking after a tool result burns the token budget before
-            // any visible reply.
+            // Thinking is unlimited by choice; the live token counter in the
+            // thinking bubble is what separates "working" from "frozen".
             session = ChatSession(
                 container,
                 instructions: Self.instructions,
-                generateParameters: .init(maxTokens: 1000, temperature: 0),
-                additionalContext: ["enable_thinking": false],
+                generateParameters: .init(temperature: 0),
                 tools: tools.specs,
                 toolDispatch: { call in
                     let result = try await tools.dispatch(call)
