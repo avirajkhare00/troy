@@ -68,7 +68,7 @@
 <!-- ============ WORKFLOW ============ -->
 <section class="section" id="workflow">
   <div class="wrap">
-    <h2>Five commands, start to shipped.</h2>
+    <h2>Six commands, start to shipped.</h2>
     <p class="section-lede">Each step is one command. The order is the whole method.</p>
     <ol class="steps">
       <li>
@@ -181,6 +181,37 @@
 
 loss = dpo(policy_logps, ref_logps)</code></pre>
     </figure>
+  </div>
+</section>
+
+<!-- ============ IPHONE: RUN + MESH ============ -->
+<section class="section" id="iphone">
+  <div class="wrap">
+    <h2>The iPhone is part of the rig now.</h2>
+    <p class="section-lede">It runs the model you trained &mdash; and it helps make the dataset you
+    train on. Both directions, fully local.</p>
+    <div class="recipe-grid">
+      <figure class="codecard">
+        <figcaption class="codecard-title mono">run it on iPhone &mdash; troy export -f ios</figcaption>
+<pre class="mono"><code><span class="c"># fuse + validate for MLX Swift:</span>
+<span class="c"># architecture, tokenizer, memory fit</span>
+$ troy export -f ios
+<span class="c"># then a dozen lines of Swift —</span>
+<span class="c"># streaming, tool calls, offline</span></code></pre>
+        <p class="term-note">Your fine-tune on the phone&rsquo;s GPU, no server, no network.
+        Two working SwiftUI apps in the repo. <a href="ios/">The iPhone page &rarr;</a></p>
+      </figure>
+      <figure class="codecard">
+        <figcaption class="codecard-title mono">generate on iPhones &mdash; troy mesh</figcaption>
+<pre class="mono"><code><span class="c"># Mac coordinates, phones generate:</span>
+$ troy mesh serve --from ./docs --n 500
+<span class="c"># every device joins with one token —</span>
+<span class="c"># TroyWorker on iPhones,</span>
+<span class="c"># troy mesh join on Macs</span></code></pre>
+        <p class="term-note">Idle phones run a local teacher and write your training data &mdash;
+        validated centrally, dropout-proof. <a href="mesh/">The mesh page &rarr;</a></p>
+      </figure>
+    </div>
   </div>
 </section>
 
