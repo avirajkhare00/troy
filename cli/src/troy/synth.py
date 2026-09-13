@@ -8,8 +8,9 @@ from __future__ import annotations
 
 import json
 import re
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Set, Tuple
 
 from .hardware import detect
 
@@ -268,23 +269,26 @@ def build_tool_record(
     return {"messages": messages, "tools": schemas}
 
 
-def run_synth(
-    n: int,
-    out_path: Path,
+@dataclass
+class SynthSpec:
+    """Everything a synth run needs besides the teacher model itself."""
+
+    fmt: str
+    task: str
+    keys: Tuple[str, ...]
+    system: str
+    chunks: List[Optional[str]]
+    schemas: List[Dict[str, Any]]
+    pairs_per_call: int
+
+
+def prepare_synth(
     fmt: str,
-    teacher: str,
     seed_task: Optional[str],
     source: Optional[Path],
-    max_tokens: int,
-    temperature: float,
     tools_path: Optional[Path] = None,
-    think: bool = True,
-) -> Dict[str, Any]:
-    """Generate n examples; returns stats. Writes JSONL to out_path."""
-    from mlx_lm.generate import generate
-    from mlx_lm.sample_utils import make_sampler
-    from mlx_lm.utils import load
-
+) -> SynthSpec:
+    """Validate inputs and build the static spec shared by every teacher call."""
     schemas: List[Dict[str, Any]] = []
     if fmt == "tools":
         if tools_path is None:
@@ -304,26 +308,90 @@ def run_synth(
         "answering questions about the source material accurately and concisely"
     )
     keys = ("prompt", "chosen", "rejected") if fmt == "preference" else ("user", "assistant")
-    build = _preference_prompt if fmt == "preference" else _chat_prompt
+    system = task if seed_task else "You are a helpful assistant that uses tools."
+    # tool scenarios are long, so ask for fewer per call
+    pairs_per_call = 3 if fmt == "tools" else PAIRS_PER_CALL
+    return SynthSpec(fmt, task, keys, system, chunks, schemas, pairs_per_call)
+
+
+def mint_prompt(spec: SynthSpec, chunk_i: int, want: int) -> str:
+    """Render one teacher prompt asking for `want` examples."""
+    if spec.fmt == "tools":
+        return _tools_prompt(spec.task, spec.schemas, want)
+    build = _preference_prompt if spec.fmt == "preference" else _chat_prompt
+    return build(spec.task, spec.chunks[chunk_i % len(spec.chunks)], want)
+
+
+def ingest_raw(
+    raw: str, spec: SynthSpec, think: bool, seen: Set[str]
+) -> Tuple[List[Dict[str, Any]], int]:
+    """Raw teacher output -> (train-ready records, examples parsed).
+
+    Mutates `seen` with the dedupe keys of accepted records; parsed minus
+    accepted is the duplicate count.
+    """
+    records: List[Dict[str, Any]] = []
+    if spec.fmt == "tools":
+        examples = parse_tool_examples(raw, spec.schemas)
+        for ex in examples:
+            key = ex["user"].lower()
+            if key in seen:
+                continue
+            seen.add(key)
+            records.append(build_tool_record(ex, spec.schemas, spec.system, think))
+        return records, len(examples)
+    pairs = parse_pairs(raw, spec.keys)
+    for pair in pairs:
+        key = pair[spec.keys[0]].lower()
+        if key in seen:
+            continue
+        seen.add(key)
+        if spec.fmt == "preference":
+            records.append(pair)
+        else:
+            records.append(
+                {
+                    "messages": [
+                        {"role": "user", "content": pair["user"]},
+                        {"role": "assistant", "content": pair["assistant"]},
+                    ]
+                }
+            )
+    return records, len(pairs)
+
+
+def run_synth(
+    n: int,
+    out_path: Path,
+    fmt: str,
+    teacher: str,
+    seed_task: Optional[str],
+    source: Optional[Path],
+    max_tokens: int,
+    temperature: float,
+    tools_path: Optional[Path] = None,
+    think: bool = True,
+) -> Dict[str, Any]:
+    """Generate n examples; returns stats. Writes JSONL to out_path."""
+    from mlx_lm.generate import generate
+    from mlx_lm.sample_utils import make_sampler
+    from mlx_lm.utils import load
+
+    spec = prepare_synth(fmt, seed_task, source, tools_path)
 
     print(f"Loading teacher {teacher} ...")
     model, tokenizer = load(teacher)
     sampler = make_sampler(temp=temperature)
 
-    seen = set()
+    seen: Set[str] = set()
     records: List[Dict[str, Any]] = []
     calls = failures = 0
     chunk_i = 0
-    # tool scenarios are long, so ask for fewer per call; retry budget stays generous
-    pairs_per_call = 3 if fmt == "tools" else PAIRS_PER_CALL
-    max_calls = (n // pairs_per_call + 1) * 4
+    max_calls = (n // spec.pairs_per_call + 1) * 4
 
     while len(records) < n and calls < max_calls:
-        want = min(pairs_per_call, n - len(records))
-        if fmt == "tools":
-            prompt = _tools_prompt(task, schemas, want)
-        else:
-            prompt = build(task, chunks[chunk_i % len(chunks)], want)
+        want = min(spec.pairs_per_call, n - len(records))
+        prompt = mint_prompt(spec, chunk_i, want)
         chunk_i += 1
         calls += 1
         messages = [{"role": "user", "content": prompt}]
@@ -333,44 +401,12 @@ def run_synth(
         raw = generate(
             model, tokenizer, templated, max_tokens=max_tokens, sampler=sampler
         )
-        if fmt == "tools":
-            system = task if seed_task else "You are a helpful assistant that uses tools."
-            examples = parse_tool_examples(raw, schemas)
-            if not examples:
-                failures += 1
-                continue
-            for ex in examples:
-                key = ex["user"].lower()
-                if key in seen:
-                    continue
-                seen.add(key)
-                records.append(build_tool_record(ex, schemas, system, think))
-                if len(records) >= n:
-                    break
-            print(f"  {len(records)}/{n} examples ({calls} teacher calls)")
-            continue
-        pairs = parse_pairs(raw, keys)
-        if not pairs:
+        new, parsed = ingest_raw(raw, spec, think, seen)
+        if not parsed:
             failures += 1
             continue
-        for pair in pairs:
-            key = pair[keys[0]].lower()
-            if key in seen:
-                continue
-            seen.add(key)
-            if fmt == "preference":
-                records.append(pair)
-            else:
-                records.append(
-                    {
-                        "messages": [
-                            {"role": "user", "content": pair["user"]},
-                            {"role": "assistant", "content": pair["assistant"]},
-                        ]
-                    }
-                )
-            if len(records) >= n:
-                break
+        records.extend(new)
+        del records[n:]
         print(f"  {len(records)}/{n} examples ({calls} teacher calls)")
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
@@ -383,6 +419,6 @@ def run_synth(
         "requested": n,
         "teacher_calls": calls,
         "empty_responses": failures,
-        "chunks": 0 if chunks == [None] else len(chunks),
+        "chunks": 0 if spec.chunks == [None] else len(spec.chunks),
         "out": str(out_path),
     }

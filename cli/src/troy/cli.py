@@ -454,5 +454,148 @@ def synth(
     )
 
 
+mesh_app = typer.Typer(
+    name="mesh",
+    help="Distribute data synthesis across devices on your LAN.",
+    no_args_is_help=True,
+)
+app.add_typer(mesh_app)
+
+
+@mesh_app.command("serve")
+def mesh_serve(
+    source: Optional[Path] = typer.Option(
+        None, "--from", help="Ground examples in a file or folder of docs/code."
+    ),
+    seed: Optional[str] = typer.Option(
+        None, "--seed", help='Task description, e.g. "customer support bot for Acme".'
+    ),
+    n: int = typer.Option(100, "--n", help="Number of examples to generate."),
+    fmt: str = typer.Option(
+        "chat", "--format", "-f",
+        help="Output format: chat (SFT), preference (DPO/ORPO), or tools (tool calling).",
+    ),
+    tools: Optional[Path] = typer.Option(
+        None, "--tools",
+        help="For -f tools: JSON file with the tool schemas (OpenAI function format).",
+    ),
+    no_think: bool = typer.Option(
+        False, "--no-think",
+        help="For -f tools: omit the <think> reasoning traces.",
+    ),
+    out: Optional[Path] = typer.Option(
+        None, "--out", "-o",
+        help="Output file (default: data/train.jsonl or data/preferences.jsonl).",
+    ),
+    max_tokens: int = typer.Option(2048, help="Max tokens per teacher call."),
+    temperature: float = typer.Option(0.8),
+    host: str = typer.Option("0.0.0.0", help="Interface to bind."),
+    port: int = typer.Option(8765),
+    token: Optional[str] = typer.Option(
+        None, help="Shared worker token (default: generated at startup)."
+    ),
+    lease_timeout: float = typer.Option(
+        300.0, help="Seconds before an unanswered work item is requeued."
+    ),
+    linger: float = typer.Option(
+        30.0, help="Seconds to wait for in-flight results after the target is hit."
+    ),
+) -> None:
+    """Coordinate a mesh: serve synth work to iPhones and Macs on your LAN.
+
+    Workers run the teacher model; this machine only mints prompts and
+    validates results, so it can be any Mac (the model never loads here).
+    """
+    if source is None and seed is None:
+        console.print(
+            '[red]Give the workers something to work from:[/red] '
+            '--from ./docs and/or --seed "task description".'
+        )
+        raise typer.Exit(1)
+    if fmt not in ("chat", "preference", "tools"):
+        console.print("[red]--format must be `chat`, `preference`, or `tools`.[/red]")
+        raise typer.Exit(1)
+    if fmt == "tools":
+        if tools is None or not tools.exists():
+            console.print(
+                "[red]-f tools needs --tools schemas.json[/red] — a JSON list of "
+                "OpenAI-style function specs the assistant can call."
+            )
+            raise typer.Exit(1)
+        if seed is None:
+            console.print(
+                '[red]-f tools needs --seed[/red] — it becomes the system prompt.'
+            )
+            raise typer.Exit(1)
+    out = out or Path("data") / ("preferences.jsonl" if fmt == "preference" else "train.jsonl")
+    if out.exists():
+        console.print(f"[red]{out} already exists[/red] — pass -o to write elsewhere.")
+        raise typer.Exit(1)
+
+    import secrets
+
+    from rich.panel import Panel
+
+    from .mesh import MeshState, lan_ip, run_mesh_serve
+    from .synth import prepare_synth
+
+    token = token or secrets.token_urlsafe(16)
+    state = MeshState(
+        prepare_synth(fmt, seed, source, tools), n, out,
+        max_tokens=max_tokens, temperature=temperature,
+        lease_timeout=lease_timeout, think=not no_think,
+    )
+    join_url = f"http://{lan_ip()}:{port}"
+    console.print(Panel.fit(
+        f"Join from a Mac:   [bold]troy mesh join {join_url} --token {token}[/bold]\n"
+        f"Join from iPhone:  TroyWorker app → {join_url} + token [bold]{token}[/bold]",
+        title="troy mesh coordinator",
+    ))
+
+    stats = run_mesh_serve(state, host, port, token, linger=linger)
+    console.print(
+        f"\nWrote [bold]{stats['records']}[/bold] examples to [bold]{stats['out']}[/bold] "
+        f"across {len(stats['workers'])} worker(s)"
+    )
+    if stats["records"] < stats["target"]:
+        console.print(
+            f"[yellow]Stopped at {stats['records']}/{stats['target']}.[/yellow]"
+        )
+    console.print(
+        "Review the data before training — spot-check a dozen examples, then: "
+        f"[bold]troy data validate {out}[/bold] and [bold]troy train[/bold]."
+    )
+
+
+@mesh_app.command("join")
+def mesh_join(
+    url: str = typer.Argument(..., help="Coordinator URL, e.g. http://192.168.1.5:8765"),
+    token: str = typer.Option(..., help="Token printed by `troy mesh serve`."),
+    model: str = typer.Option(
+        "auto", help="Teacher model to run here (auto = sized to this Mac's memory)."
+    ),
+    name: Optional[str] = typer.Option(
+        None, help="Worker name shown on the coordinator (default: hostname)."
+    ),
+    batch: int = typer.Option(2, help="Work items to lease per request."),
+) -> None:
+    """Join a mesh as a worker: run the teacher here, send results back."""
+    _require_apple_silicon()
+
+    import socket
+
+    from .mesh import run_mesh_join
+    from .synth import pick_teacher
+
+    if model == "auto":
+        model = pick_teacher()
+        console.print(f"Teacher: [bold]{model}[/bold] (picked for this Mac's memory)")
+    stats = run_mesh_join(url, token, model, name or socket.gethostname(), batch=batch)
+    console.print(
+        f"\nDone: completed [bold]{stats['completed']}[/bold] work item(s) "
+        f"({stats.get('records', '?')}/{stats.get('target', '?')} mesh total)."
+    )
+
+
 if __name__ == "__main__":
     app()
