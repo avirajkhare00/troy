@@ -35,14 +35,24 @@
 
 <main>
 
-<section class="hero cook-hero">
-  <div class="wrap">
-    <p class="eyebrow">iOS · MLX Swift · on-device</p>
-    <h1>Train on your Mac. Run it on your iPhone.</h1>
-    <p class="lede">The model you fine-tuned with Troy doesn&rsquo;t have to stay on the Mac.
-    <span class="mono">troy export -f ios</span> packages it for
-    <a href="https://github.com/ml-explore/mlx-swift-lm">MLX Swift</a> &mdash; the same weights,
-    generating on the iPhone&rsquo;s GPU, with no server and no network. Airplane mode is the demo.</p>
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <p class="eyebrow">iOS · MLX Swift · on-device</p>
+      <h1>Train on your Mac. Run it on your iPhone.</h1>
+      <p class="lede">The model you fine-tuned with Troy doesn&rsquo;t have to stay on the Mac.
+      <span class="mono">troy export -f ios</span> packages it for
+      <a href="https://github.com/ml-explore/mlx-swift-lm">MLX Swift</a> &mdash; the same weights,
+      generating on the iPhone&rsquo;s GPU, with no server and no network. Airplane mode is the demo.</p>
+    </div>
+    <figure class="phone-demo">
+      <video autoplay loop muted playsinline preload="metadata"
+             aria-label="TroyTravel demo: a fine-tuned model planning a trip with tool calls, on an iPhone">
+        <source src="../assets/troytravel-demo.mp4" type="video/mp4">
+      </video>
+      <figcaption class="term-note">A fine-tuned Qwen3-1.7B planning a trip with real tool calls
+      &mdash; on an iPhone, offline.</figcaption>
+    </figure>
   </div>
 </section>
 
