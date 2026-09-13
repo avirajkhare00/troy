@@ -23,8 +23,21 @@ final class Itinerary {
 /// Mock travel tools. All data is fake and deterministic — this is a demo of
 /// on-device tool calling, not a booking engine.
 @MainActor
-struct TravelTools {
+final class TravelTools {
     let itinerary: Itinerary
+    private var callsThisTurn = 0
+    private var seenCalls = Set<String>()
+    private let maxCallsPerTurn = 6
+
+    init(itinerary: Itinerary) {
+        self.itinerary = itinerary
+    }
+
+    /// Call at the start of each user turn.
+    func resetTurn() {
+        callsThisTurn = 0
+        seenCalls.removeAll()
+    }
 
     var specs: [ToolSpec] {
         [
@@ -65,6 +78,17 @@ struct TravelTools {
     }
 
     func dispatch(_ call: ToolCall) -> String {
+        // Guardrails for a small model: budget per turn, and reject repeats —
+        // both break tool-call loops by telling the model to summarize.
+        callsThisTurn += 1
+        if callsThisTurn > maxCallsPerTurn {
+            return #"{"error": "tool budget exhausted — stop calling tools and summarize the plan for the user now"}"#
+        }
+        let signature = "\(call.function.name)|\(call.function.arguments)"
+        if !seenCalls.insert(signature).inserted {
+            return #"{"error": "duplicate call — this was already done, do not repeat it; summarize for the user"}"#
+        }
+
         let args = call.function.arguments
         func str(_ key: String) -> String {
             if case .string(let s)? = args[key] { return s }

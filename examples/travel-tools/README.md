@@ -1,7 +1,16 @@
 # travel-tools — fine-tune for tool calling
 
-Teaches `Qwen3-0.6B-4bit` to call travel-planner tools reliably:
+Teaches `Qwen3-1.7B-4bit` to call travel-planner tools reliably:
 `search_flights`, `find_hotels`, `get_weather`, `add_to_itinerary`.
+
+**Why 1.7B and not 0.6B?** We tried 0.6B first, three times. It learned the
+tool-call *format* perfectly (val loss 0.06) but never the *decision*: it
+refused valid requests, invented departure cities instead of asking, and
+swapped behaviors between prompts on every retrain. The conditional rule
+"origin present → call the tool; origin absent → ask first" reliably emerges
+one size up. If your task is format-only (always call, fixed schema), 0.6B is
+fine; if the model must decide *whether* and *what to ask*, start at 1.7B
+(~1 GB at 4-bit — still an easy iPhone fit).
 
 Small models botch tool calls — wrong argument names, invented tools,
 malformed JSON. This is one of the highest-leverage fine-tunes a small

@@ -1,6 +1,6 @@
 # Teach a small model reliable tool calling — travel-planner tools.
 # Pairs with the on-device demo app: examples/ios/TroyTravel
-base: mlx-community/Qwen3-0.6B-4bit
+base: mlx-community/Qwen3-1.7B-4bit
 task: sft
 
 data:
@@ -8,7 +8,7 @@ data:
   val_split: 0.15
 
 training:
-  epochs: 6
+  epochs: 3
   batch_size: 1
   learning_rate: 1.0e-4
   seq_len: 2048

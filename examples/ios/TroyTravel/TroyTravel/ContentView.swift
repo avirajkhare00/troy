@@ -24,6 +24,7 @@ struct ContentView: View {
     @State private var store = ModelStore()
     @State private var itinerary = Itinerary()
     @State private var session: ChatSession?
+    @State private var tools: TravelTools?
     @State private var messages: [ChatMessage] = []
     @State private var input = ""
     @State private var generating = false
@@ -33,7 +34,10 @@ struct ContentView: View {
     private static let instructions = """
         You are a travel planning assistant. Use the available tools to look up \
         flights, hotels and weather, and build the user's trip with \
-        add_to_itinerary. Keep replies short. All data comes from the tools.
+        add_to_itinerary. Keep replies short. All data comes from the tools. \
+        Never guess the departure city — if the user has not said where they \
+        are flying from, ask before calling search_flights. You cannot book or \
+        purchase anything, and you have no train or bus tools.
         """
 
     var body: some View {
@@ -205,6 +209,7 @@ struct ContentView: View {
         await store.load(hubRepo: hubRepo)
         if case .ready(let container, _) = store.state {
             let tools = TravelTools(itinerary: itinerary)
+            self.tools = tools
             session = ChatSession(
                 container,
                 instructions: Self.instructions,
@@ -224,19 +229,31 @@ struct ContentView: View {
         let prompt = input.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !prompt.isEmpty, !generating, let session else { return }
         input = ""
+        tools?.resetTurn()
         messages.append(ChatMessage(role: "user", text: prompt))
-        messages.append(ChatMessage(role: "assistant", text: ""))
         generating = true
         Task {
             do {
                 for try await chunk in session.streamResponse(to: prompt) {
+                    // Only open an assistant bubble when text actually arrives,
+                    // so tool-call rounds don't leave empty bubbles behind.
                     if messages.last?.role != "assistant" {
+                        if chunk.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                            continue
+                        }
                         messages.append(ChatMessage(role: "assistant", text: ""))
                     }
                     messages[messages.count - 1].text += chunk
                 }
+                // Drop a bubble whose content was entirely <think> reasoning.
+                if let last = messages.last, last.role == "assistant",
+                    last.visibleText.isEmpty
+                {
+                    messages.removeLast()
+                }
             } catch {
-                messages[messages.count - 1].text += "\n[error: \(error.localizedDescription)]"
+                messages.append(
+                    ChatMessage(role: "assistant", text: "[error: \(error.localizedDescription)]"))
             }
             generating = false
         }
