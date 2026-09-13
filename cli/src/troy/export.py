@@ -117,6 +117,43 @@ roughly 4 GB of weights. Test on the oldest device you target.
 """
 
 
+def _base_is_quantized(base: str) -> bool:
+    import json
+
+    p = Path(base)
+    if not p.exists():
+        from huggingface_hub import snapshot_download
+
+        p = Path(snapshot_download(base, allow_patterns=["config.json"]))
+    return "quantization" in json.loads((p / "config.json").read_text())
+
+
+def _fuse_for_ios(base: str, adapter_path: str, save_path: str) -> None:
+    """Fuse for iOS without destroying the adapter.
+
+    Fusing a LoRA into 4-bit weights loses the deltas to quantization noise —
+    the exported model silently behaves like the base. So for a quantized
+    base: dequantize-fuse to fp16, then requantize fresh at 8 bits (verified
+    to preserve tuned behavior; 6 bits already degrades it).
+    """
+    import shutil
+    import tempfile
+
+    if not _base_is_quantized(base):
+        _fuse(base, adapter_path, save_path, dequantize=False)
+        return
+    from mlx_lm import convert
+
+    print("Quantized base: dequantize-fusing, then requantizing at 8 bits")
+    print("(fusing straight into 4-bit silently erases the adapter).")
+    out = Path(save_path)
+    if out.exists():
+        shutil.rmtree(out)
+    with tempfile.TemporaryDirectory() as td:
+        _fuse(base, adapter_path, td, dequantize=True)
+        convert(td, mlx_path=str(out), quantize=True, q_bits=8)
+
+
 def _dir_weight_bytes(save_path: Path) -> int:
     return sum(p.stat().st_size for p in save_path.glob("*.safetensors"))
 
@@ -193,7 +230,10 @@ def run_export(
 
         snapshot_download(base)
 
-    _fuse(base, adapter_path, save_path, dequantize)
+    if fmt == "ios":
+        _fuse_for_ios(base, adapter_path, save_path)
+    else:
+        _fuse(base, adapter_path, save_path, dequantize)
     print(f"Fused model: {Path(save_path).resolve()}")
     if fmt == "gguf":
         out = _export_gguf(Path(save_path))

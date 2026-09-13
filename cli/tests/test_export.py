@@ -41,3 +41,14 @@ def test_ios_export_unsupported_arch_fails(tmp_path):
 def test_ios_export_missing_tokenizer_fails(tmp_path):
     with pytest.raises(SystemExit):
         _export_ios(_make_model(tmp_path, tokenizer=False))
+
+
+def test_base_is_quantized_local_dir(tmp_path):
+    from troy.export import _base_is_quantized
+
+    q = tmp_path / "quant"; q.mkdir()
+    (q / "config.json").write_text(json.dumps({"model_type": "qwen3", "quantization": {"bits": 4}}))
+    f = tmp_path / "full"; f.mkdir()
+    (f / "config.json").write_text(json.dumps({"model_type": "qwen3"}))
+    assert _base_is_quantized(str(q)) is True
+    assert _base_is_quantized(str(f)) is False

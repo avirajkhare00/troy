@@ -172,6 +172,13 @@
         training data has empty think blocks, disable thinking at inference &mdash; or synthesize traces
         with <span class="mono">troy data synth -f tools</span> so the model learns to think <em>and stop</em>.</p>
       </li>
+      <li>
+        <code class="mono step-cmd">never fuse into 4-bit</code>
+        <p>Fusing a LoRA straight into 4-bit weights erases the adapter &mdash; the deltas drown in
+        quantization noise and the export silently behaves like the base model.
+        <span class="mono">troy export -f ios</span> handles it: dequantize-fuse, then requantize
+        at 8 bits, which we verified preserves tuned behavior (6 bits already degrades it).</p>
+      </li>
     </ol>
   </div>
 </section>

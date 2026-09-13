@@ -220,13 +220,11 @@ struct ContentView: View {
             session = ChatSession(
                 container,
                 instructions: Self.instructions,
-                // Greedy + thinking off: the one config that is fast, correct,
-                // and stall-free on device with this adapter. Field-tested
-                // alternatives all failed: uncapped thinking loops, capped
-                // thinking eats the reply, repetition penalty corrupts
-                // tool-call JSON.
+                // Greedy for deterministic tool calls; thinking stays on —
+                // the 8-bit requantized fuse preserves the adapter's trained
+                // traces, which think briefly and close. (4-bit fusing wiped
+                // the adapter entirely; that was every earlier on-device bug.)
                 generateParameters: .init(temperature: 0),
-                additionalContext: ["enable_thinking": false],
                 tools: tools.specs,
                 toolDispatch: { call in
                     let result = try await tools.dispatch(call)

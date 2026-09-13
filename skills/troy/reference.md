@@ -37,7 +37,11 @@ Fuses adapter into base → `<output>/fused/`. gguf additionally writes
 `ggml-model-f16.gguf` (llama/mistral/mixtral archs, unquantized base).
 Ollama: `FROM ./output/fused/ggml-model-f16.gguf` in a Modelfile, then
 `ollama create name -f Modelfile`.
-ios validates the fused model for iPhone/iPad apps using mlx-swift-lm
+ios fuses SAFELY for quantized bases: dequantize-fuse then requantize at
+8 bits. Fusing a LoRA straight into 4-bit weights silently erases the
+adapter (deltas drown in quantization noise — the export behaves like the
+base model); 8-bit requantization preserves tuned behavior, 6-bit already
+degrades it. It then validates the result for mlx-swift-lm
 (supported model_type, tokenizer.json present, weight size vs iPhone RAM)
 and writes `README-iOS.md` with the Swift loading snippet and the memory
 entitlements needed (Increased Memory Limit for >~2 GB of weights). For iOS,
