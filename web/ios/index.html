@@ -197,9 +197,49 @@
   </div>
 </section>
 
+<section class="section recipe">
+  <div class="wrap">
+    <h2>And now the iPhone trains back: the mesh</h2>
+    <p class="section-lede">Running the model is half the loop. <span class="mono">troy mesh</span> closes
+    the other half &mdash; idle iPhones on your Wi-Fi <em>generate the training data</em>. The Mac only
+    coordinates: it mints teacher prompts and validates results with exactly the
+    <span class="mono">troy data synth</span> parsing; every phone runs the teacher on its own GPU.</p>
+    <div class="recipe-grid">
+      <figure class="terminal recipe-term">
+        <figcaption class="term-bar"><span class="term-dot red"></span><span class="term-dot yellow"></span><span class="term-dot green"></span><span class="term-title mono">troy mesh serve &mdash; zsh</span></figcaption>
+<pre class="term-body mono"><span class="t-cmd">$ troy mesh serve --from ./docs --n 50</span>
+<span class="t-out">Join from a Mac:  troy mesh join</span>
+<span class="t-out">  http://192.168.1.3:8766 --token wZ3…</span>
+<span class="t-out">Join from iPhone: TroyWorker app</span>
+<span class="t-out"> </span>
+<span class="t-out">troy mesh — 50/50 records</span>
+<span class="t-out">  worker    records   dupes   last seen</span>
+<span class="t-ok">  iPhone         50       1      0s ago</span>
+<span class="t-dim">1.2 rec/min · wrote data/train.jsonl</span></pre>
+        <figcaption class="term-note">Actual run &mdash; an iPhone 17 Pro generated all 50 records
+        with an on-device Qwen3-4B teacher while the Mac coordinated.</figcaption>
+      </figure>
+      <div>
+        <div class="table-scroll">
+          <table class="mem-table">
+            <tbody>
+              <tr><td><strong>Workers are dumb</strong></td><td>the coordinator renders every teacher prompt server-side; phones just complete text and send it back &mdash; your documents never leave the Mac un-chunked</td></tr>
+              <tr><td><strong>Dropout-proof</strong></td><td>leased work requeues automatically when a phone locks, backgrounds, or leaves &mdash; kill a worker mid-run and the count still gets there</td></tr>
+              <tr><td><strong>Same validation</strong></td><td>malformed and duplicate generations are rejected centrally with the exact <span class="mono">data synth</span> code path &mdash; the output is a normal <span class="mono">train.jsonl</span></td></tr>
+              <tr><td><strong>Any Apple device</strong></td><td>iPhones join via the <a href="https://github.com/avirajkhare00/troy/tree/main/examples/ios/TroyWorker">TroyWorker</a> app, Macs via <span class="mono">troy mesh join</span> &mdash; mix freely, one shared token</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="basemodel-note">Phones make the dataset, the Mac trains on it, the phones run the
+        result. A drawer full of old iPhones is a data-generation cluster now.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section class="section">
   <div class="wrap install-final">
-    <h2>The whole loop is local: Mac trains, iPhone runs.</h2>
+    <h2>The whole loop is local: iPhones generate, Mac trains, iPhones run.</h2>
     <code class="install-cmd mono" title="brew install avirajkhare00/troy/troy">brew install troy<button class="copy-btn" aria-label="Copy install command" onclick="copyInstall(this)">copy</button></code>
     <p class="hero-fineprint">Then <span class="mono">troy train</span>, <span class="mono">troy export -f ios</span>,
     and open <a href="https://github.com/avirajkhare00/troy/tree/main/examples/ios">examples/ios</a> in Xcode.
