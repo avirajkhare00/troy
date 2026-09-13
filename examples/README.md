@@ -14,6 +14,7 @@ on an M1 Pro (16 GB). Full walkthroughs with real outputs: https://gettroy.app/c
 | [`ios/TroyChat/`](ios/TroyChat/) | iOS app | Chat with your Troy model on iPhone (MLX Swift) |
 | [`travel-tools/`](travel-tools/) | SFT (tool calling) | Teach a small model to call tools reliably |
 | [`ios/TroyTravel/`](ios/TroyTravel/) | iOS app | Trip-planner demo: on-device tool calling (mock data) |
+| [`ios/TroyWorker/`](ios/TroyWorker/) | iOS app | Mesh worker: iPhones generate training data for `troy mesh serve` |
 
 Run any of them:
 

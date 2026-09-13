@@ -1,0 +1,390 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1288283034058875505E43A3 /* MLXHuggingFace in Frameworks */ = {isa = PBXBuildFile; productRef = 8CB730533547EA26A5419A7E /* MLXHuggingFace */; };
+		2B8E4623C077C437CF5B0FC9 /* MLXLLM in Frameworks */ = {isa = PBXBuildFile; productRef = C5A4115D19ED2D4FA228F938 /* MLXLLM */; };
+		4C078724D37920A7608FB10C /* ModelStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7E263B71FBAFA1187C31A11 /* ModelStore.swift */; };
+		71B8C87906E65BA306DE7B40 /* MeshClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FAD6F4F4EA56850F8760666 /* MeshClient.swift */; };
+		793CC63A2EE3C7BCF5A2E3AA /* TroyWorkerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF85CFC20F4022A4DE21E846 /* TroyWorkerApp.swift */; };
+		8F3EA32CF77040B22B4752B4 /* WorkerEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34F8BC582F83F32D29AD6482 /* WorkerEngine.swift */; };
+		9A6D046275573D8573520D08 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91C5C8C2CD941D6E2E1446BF /* ContentView.swift */; };
+		A1D08B235916A96C653EB74B /* MLXLMCommon in Frameworks */ = {isa = PBXBuildFile; productRef = 152F54B6E47BA735329C1587 /* MLXLMCommon */; };
+		E4C77D772588E62DAD5E5662 /* Tokenizers in Frameworks */ = {isa = PBXBuildFile; productRef = 97407FDD613F3FEF9A3BDDDE /* Tokenizers */; };
+		F352A61115FCA5BCF45782FC /* HuggingFace in Frameworks */ = {isa = PBXBuildFile; productRef = 6C9BF080B1232CD83B01693D /* HuggingFace */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		1FAD6F4F4EA56850F8760666 /* MeshClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeshClient.swift; sourceTree = "<group>"; };
+		2313884212EF3D19FF0E871B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		34F8BC582F83F32D29AD6482 /* WorkerEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkerEngine.swift; sourceTree = "<group>"; };
+		4CE90553DE6EE2A737E73AC1 /* TroyWorker.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = TroyWorker.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		91C5C8C2CD941D6E2E1446BF /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		DBC0A5301D6DE44C0B794A44 /* TroyWorker.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TroyWorker.entitlements; sourceTree = "<group>"; };
+		F7E263B71FBAFA1187C31A11 /* ModelStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelStore.swift; sourceTree = "<group>"; };
+		FF85CFC20F4022A4DE21E846 /* TroyWorkerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TroyWorkerApp.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		B61B9D408E0142366FB81EB8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2B8E4623C077C437CF5B0FC9 /* MLXLLM in Frameworks */,
+				A1D08B235916A96C653EB74B /* MLXLMCommon in Frameworks */,
+				1288283034058875505E43A3 /* MLXHuggingFace in Frameworks */,
+				F352A61115FCA5BCF45782FC /* HuggingFace in Frameworks */,
+				E4C77D772588E62DAD5E5662 /* Tokenizers in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0A41E2502796743CBA5324F9 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				4CE90553DE6EE2A737E73AC1 /* TroyWorker.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		D6A5A5C7A90441683F9C8D3A = {
+			isa = PBXGroup;
+			children = (
+				DC40A9BAFF9C7074C3178029 /* TroyWorker */,
+				0A41E2502796743CBA5324F9 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		DC40A9BAFF9C7074C3178029 /* TroyWorker */ = {
+			isa = PBXGroup;
+			children = (
+				91C5C8C2CD941D6E2E1446BF /* ContentView.swift */,
+				2313884212EF3D19FF0E871B /* Info.plist */,
+				1FAD6F4F4EA56850F8760666 /* MeshClient.swift */,
+				F7E263B71FBAFA1187C31A11 /* ModelStore.swift */,
+				DBC0A5301D6DE44C0B794A44 /* TroyWorker.entitlements */,
+				FF85CFC20F4022A4DE21E846 /* TroyWorkerApp.swift */,
+				34F8BC582F83F32D29AD6482 /* WorkerEngine.swift */,
+			);
+			path = TroyWorker;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		76EFBEFC9A0EA39E818B2D93 /* TroyWorker */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AC6727A3B70730695E58204C /* Build configuration list for PBXNativeTarget "TroyWorker" */;
+			buildPhases = (
+				A7B855472CE7E7BAD4859E43 /* Sources */,
+				B61B9D408E0142366FB81EB8 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TroyWorker;
+			packageProductDependencies = (
+				C5A4115D19ED2D4FA228F938 /* MLXLLM */,
+				152F54B6E47BA735329C1587 /* MLXLMCommon */,
+				8CB730533547EA26A5419A7E /* MLXHuggingFace */,
+				6C9BF080B1232CD83B01693D /* HuggingFace */,
+				97407FDD613F3FEF9A3BDDDE /* Tokenizers */,
+			);
+			productName = TroyWorker;
+			productReference = 4CE90553DE6EE2A737E73AC1 /* TroyWorker.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		C8A8121D074991659654BD18 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+				};
+			};
+			buildConfigurationList = AF5BAFA12E19EA11D14109A5 /* Build configuration list for PBXProject "TroyWorker" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = D6A5A5C7A90441683F9C8D3A;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				48402849F0F94D79BD9780B0 /* XCRemoteSwiftPackageReference "mlx-swift-lm" */,
+				72B42525D70F90872DBA530D /* XCRemoteSwiftPackageReference "swift-huggingface" */,
+				22202AB56FBE1E248922FC3E /* XCRemoteSwiftPackageReference "swift-transformers" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 0A41E2502796743CBA5324F9 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				76EFBEFC9A0EA39E818B2D93 /* TroyWorker */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A7B855472CE7E7BAD4859E43 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9A6D046275573D8573520D08 /* ContentView.swift in Sources */,
+				71B8C87906E65BA306DE7B40 /* MeshClient.swift in Sources */,
+				4C078724D37920A7608FB10C /* ModelStore.swift in Sources */,
+				793CC63A2EE3C7BCF5A2E3AA /* TroyWorkerApp.swift in Sources */,
+				8F3EA32CF77040B22B4752B4 /* WorkerEngine.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		0851637171A88BAFDD50F3F4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = TroyWorker/TroyWorker.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = TroyWorker/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = app.gettroy.TroyWorker;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.10;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		62CB0D8C0D3FDBBA64002A41 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		8B04DD7C9A415EAC4D0FCD0F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = TroyWorker/TroyWorker.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = TroyWorker/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = app.gettroy.TroyWorker;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.10;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		B6F61296B2F970E366634433 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		AC6727A3B70730695E58204C /* Build configuration list for PBXNativeTarget "TroyWorker" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0851637171A88BAFDD50F3F4 /* Debug */,
+				8B04DD7C9A415EAC4D0FCD0F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		AF5BAFA12E19EA11D14109A5 /* Build configuration list for PBXProject "TroyWorker" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				62CB0D8C0D3FDBBA64002A41 /* Debug */,
+				B6F61296B2F970E366634433 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		22202AB56FBE1E248922FC3E /* XCRemoteSwiftPackageReference "swift-transformers" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/huggingface/swift-transformers";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.3.0;
+			};
+		};
+		48402849F0F94D79BD9780B0 /* XCRemoteSwiftPackageReference "mlx-swift-lm" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ml-explore/mlx-swift-lm";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.31.3;
+			};
+		};
+		72B42525D70F90872DBA530D /* XCRemoteSwiftPackageReference "swift-huggingface" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/huggingface/swift-huggingface";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.9.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		152F54B6E47BA735329C1587 /* MLXLMCommon */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 48402849F0F94D79BD9780B0 /* XCRemoteSwiftPackageReference "mlx-swift-lm" */;
+			productName = MLXLMCommon;
+		};
+		6C9BF080B1232CD83B01693D /* HuggingFace */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 72B42525D70F90872DBA530D /* XCRemoteSwiftPackageReference "swift-huggingface" */;
+			productName = HuggingFace;
+		};
+		8CB730533547EA26A5419A7E /* MLXHuggingFace */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 48402849F0F94D79BD9780B0 /* XCRemoteSwiftPackageReference "mlx-swift-lm" */;
+			productName = MLXHuggingFace;
+		};
+		97407FDD613F3FEF9A3BDDDE /* Tokenizers */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 22202AB56FBE1E248922FC3E /* XCRemoteSwiftPackageReference "swift-transformers" */;
+			productName = Tokenizers;
+		};
+		C5A4115D19ED2D4FA228F938 /* MLXLLM */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 48402849F0F94D79BD9780B0 /* XCRemoteSwiftPackageReference "mlx-swift-lm" */;
+			productName = MLXLLM;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = C8A8121D074991659654BD18 /* Project object */;
+}

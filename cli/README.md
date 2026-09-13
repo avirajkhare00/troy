@@ -71,6 +71,25 @@ output: ./output
 | `troy export` | Fuse the adapter; export MLX or GGUF |
 | `troy push` | Upload adapter or fused model to the Hugging Face Hub |
 | `troy data inspect` | Dataset stats and format detection |
+| `troy data synth` | Synthesize a dataset with a local teacher model |
+| `troy mesh serve` | Coordinate a LAN mesh: iPhones and Macs generate the dataset for you |
+| `troy mesh join` | Join a mesh as a worker from any Mac |
+
+## The mesh: your idle iPhones generate the dataset
+
+`troy data synth` runs the teacher on one Mac. `troy mesh` farms the same job
+out to every Apple device on your network — the coordinator mints prompts and
+validates results (identical parsing to local synth), workers run the teacher:
+
+```bash
+troy mesh serve --from ./docs --n 500     # Mac: prints URL + token
+troy mesh join http://mac:8765 --token …  # any other Mac
+# iPhones: the TroyWorker app (examples/ios/TroyWorker)
+```
+
+Workers can drop out at any time — leased work requeues automatically, and
+duplicates are rejected centrally. The output is a normal `train.jsonl`:
+validate it, then `troy train`.
 
 ## What Troy can train on your Mac
 
