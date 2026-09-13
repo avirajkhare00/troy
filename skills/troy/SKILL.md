@@ -29,7 +29,7 @@ troy train                              # trains; adapter -> output/adapter
 troy chat [-p "one-shot prompt"]        # talk to the trained adapter
 troy eval [-p "prompt"]                 # base-vs-tuned loss/ppl + samples
 troy serve [--port 8080]                # OpenAI-compatible API on localhost
-troy export [-f gguf]                   # fuse adapter; MLX or GGUF output
+troy export [-f gguf|ios]               # fuse adapter; MLX, GGUF, or iOS output
 troy push user/repo [--fused --public]  # upload to Hugging Face Hub
 troy data synth --from ./docs           # synthesize train.jsonl (local teacher)
 troy data validate file.jsonl           # lint: broken/empty/duplicate records

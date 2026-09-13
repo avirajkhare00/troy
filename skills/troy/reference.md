@@ -32,11 +32,16 @@ puts reasoning-model thinking in `message.reasoning`; final text in
 `message.content` (give reasoning models max_tokens headroom).
 
 ## troy export
-`troy export [-c troy.yaml] [-f mlx|gguf] [--save-path DIR] [--dequantize]`
+`troy export [-c troy.yaml] [-f mlx|gguf|ios] [--save-path DIR] [--dequantize]`
 Fuses adapter into base → `<output>/fused/`. gguf additionally writes
 `ggml-model-f16.gguf` (llama/mistral/mixtral archs, unquantized base).
 Ollama: `FROM ./output/fused/ggml-model-f16.gguf` in a Modelfile, then
 `ollama create name -f Modelfile`.
+ios validates the fused model for iPhone/iPad apps using mlx-swift-lm
+(supported model_type, tokenizer.json present, weight size vs iPhone RAM)
+and writes `README-iOS.md` with the Swift loading snippet and the memory
+entitlements needed (Increased Memory Limit for >~2 GB of weights). For iOS,
+train from a 4-bit base and keep weights under ~4 GB; skip --dequantize.
 
 ## troy push
 `troy push USER/REPO [-c troy.yaml] [--fused] [--public]`

@@ -258,14 +258,14 @@ def serve(
 @app.command()
 def export(
     config: Path = typer.Option(Path("troy.yaml"), "--config", "-c", help="Config file."),
-    fmt: str = typer.Option("mlx", "--format", "-f", help="Export format: mlx or gguf."),
+    fmt: str = typer.Option("mlx", "--format", "-f", help="Export format: mlx, gguf, or ios."),
     save_path: Optional[Path] = typer.Option(None, help="Output directory (default: <output>/fused)."),
     dequantize: bool = typer.Option(False, help="Dequantize when fusing a quantized base."),
 ) -> None:
     """Merge the trained adapter into the base model and export it."""
     _require_apple_silicon()
-    if fmt not in ("mlx", "gguf"):
-        console.print("[red]--format must be `mlx` or `gguf`.[/red]")
+    if fmt not in ("mlx", "gguf", "ios"):
+        console.print("[red]--format must be `mlx`, `gguf`, or `ios`.[/red]")
         raise typer.Exit(1)
     from .config import load_config
     from .export import run_export

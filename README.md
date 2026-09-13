@@ -33,6 +33,7 @@ troy chat              # talk to the result
 troy eval              # did it work? base-vs-tuned loss + samples
 troy serve             # OpenAI-compatible API at localhost:8080/v1
 troy export -f gguf    # ship it to llama.cpp / Ollama / LM Studio
+troy export -f ios     # package for iPhone/iPad apps (MLX Swift)
 troy push you/model    # upload to the Hugging Face Hub
 ```
 
@@ -78,6 +79,7 @@ Any architecture [mlx-lm](https://github.com/ml-explore/mlx-lm) supports — Lla
 - **Out of memory during training** — pick a smaller/4-bit base (see `troy doctor`), lower `batch_size` to 1, reduce `seq_len`, or set `grad_checkpoint: true`.
 - **Reply cut off over the API (`troy serve`)** — reasoning models (e.g. Qwen3) think before answering; raise `max_tokens`.
 - **GGUF export fails** — `-f gguf` supports llama/mistral/mixtral architectures with an unquantized base; the default MLX export covers everything.
+- **iOS export warns about size or architecture** — `-f ios` checks the fused model against what [mlx-swift-lm](https://github.com/ml-explore/mlx-swift-lm) loads on iPhone; train from a 4-bit base under ~4 GB and see the generated `README-iOS.md` for the Swift loading snippet and memory entitlements.
 - Something else? [Open an issue](https://github.com/avirajkhare00/troy/issues) with your `troy doctor` output, or ask in [Discussions](https://github.com/avirajkhare00/troy/discussions).
 
 ## Claude skill
