@@ -55,12 +55,14 @@
       <figure class="terminal recipe-term">
         <figcaption class="term-bar"><span class="term-dot red"></span><span class="term-dot yellow"></span><span class="term-dot green"></span><span class="term-title mono">troy export -f ios &mdash; zsh</span></figcaption>
 <pre class="term-body mono"><span class="t-cmd">$ troy export -f ios</span>
-<span class="t-out">Fusing adapter into base model ...</span>
+<span class="t-out">Quantized base: dequantize-fusing, then</span>
+<span class="t-out">requantizing at 8 bits (fusing straight into</span>
+<span class="t-out">4-bit silently erases the adapter).</span>
 <span class="t-out">Fused model: ./output/fused</span>
-<span class="t-out">Weights: 0.97 GB (quantized), model_type: qwen3</span>
+<span class="t-out">Weights: 1.7 GB (quantized), model_type: qwen3</span>
 <span class="t-ok">iPhone fit: comfortable — loads on recent iPhones</span>
 <span class="t-dim">Wrote output/fused/README-iOS.md</span></pre>
-        <figcaption class="term-note">Actual output &mdash; a fine-tuned Qwen3-1.7B, 4-bit.</figcaption>
+        <figcaption class="term-note">Actual output &mdash; a fine-tuned Qwen3-1.7B.</figcaption>
       </figure>
       <div>
         <div class="table-scroll">
@@ -73,8 +75,9 @@
             </tbody>
           </table>
         </div>
-        <p class="basemodel-note">Rule of thumb: train from a 4-bit base and keep weights under
-        ~4&nbsp;GB for 8&nbsp;GB-RAM iPhones. <span class="mono">troy export -f ios</span> tells you where you stand.</p>
+        <p class="basemodel-note">Rule of thumb: the export is 8-bit, so budget ~1.1&nbsp;GB per
+        billion parameters &mdash; a 1&ndash;2B model is the sweet spot for 8&nbsp;GB-RAM iPhones.
+        <span class="mono">troy export -f ios</span> tells you where you stand.</p>
       </div>
     </div>
   </div>
