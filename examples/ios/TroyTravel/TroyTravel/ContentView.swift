@@ -220,7 +220,13 @@ struct ContentView: View {
             session = ChatSession(
                 container,
                 instructions: Self.instructions,
+                // Greedy + thinking off: the one config that is fast, correct,
+                // and stall-free on device with this adapter. Field-tested
+                // alternatives all failed: uncapped thinking loops, capped
+                // thinking eats the reply, repetition penalty corrupts
+                // tool-call JSON.
                 generateParameters: .init(temperature: 0),
+                additionalContext: ["enable_thinking": false],
                 tools: tools.specs,
                 toolDispatch: { call in
                     let result = try await tools.dispatch(call)
@@ -254,7 +260,12 @@ struct ContentView: View {
         generating = true
         Task {
             do {
+                var chunkChars = 0
                 for try await chunk in session.streamResponse(to: prompt) {
+                    chunkChars += chunk.count
+                    if chunkChars / 400 != (chunkChars - chunk.count) / 400 {
+                        print("[troytravel] streamed \(chunkChars) chars; tail: \(String(chunk.suffix(60)))")
+                    }
                     // Only open an assistant bubble when text actually arrives,
                     // so tool-call rounds don't leave empty bubbles behind.
                     if messages.last?.role != "assistant" {
