@@ -26,6 +26,7 @@
     <nav class="head-nav">
       <a href="#workflow">Workflow</a>
       <a href="ios/">iPhone</a>
+      <a href="mesh/">Mesh</a>
       <a href="cookbook/">Cookbook</a>
       <a href="bhai-lang/">Case study</a>
       <a href="https://github.com/avirajkhare00/troy" class="gh-link">GitHub<span class="gh-star">★</span></a>
@@ -77,6 +78,11 @@
       <li>
         <code class="mono step-cmd">troy init</code>
         <p>Writes a <span class="mono">troy.yaml</span> from a template &mdash; SFT, DPO, or ORPO &mdash; plus sample data to replace with yours.</p>
+      </li>
+      <li>
+        <code class="mono step-cmd">troy data synth</code>
+        <p>No dataset? A local teacher model writes one from your docs or a task description &mdash;
+        or <span class="mono">troy mesh</span> and <a href="mesh/">every iPhone on your Wi-Fi generates it for you</a>.</p>
       </li>
       <li>
         <code class="mono step-cmd">troy train</code>
@@ -183,7 +189,7 @@ loss = dpo(policy_logps, ref_logps)</code></pre>
   <div class="wrap install-final">
     <h2>Your MacBook is the training rig.</h2>
     <code class="install-cmd mono" title="brew install avirajkhare00/troy/troy">brew install troy<button class="copy-btn" aria-label="Copy install command" onclick="copyInstall(this)">copy</button></code>
-    <p class="hero-fineprint">Or <span class="mono">pipx install troy-cli</span>. Then: <span class="mono">troy doctor</span> to see what this machine can do &mdash; and the <a href="cookbook/">cookbook</a> for what to build with it. Read how we <a href="bhai-lang/">taught a model bhai-lang in 40 minutes</a> &mdash; or <a href="ios/">put your model on an iPhone</a>.</p>
+    <p class="hero-fineprint">Or <span class="mono">pipx install troy-cli</span>. Then: <span class="mono">troy doctor</span> to see what this machine can do &mdash; and the <a href="cookbook/">cookbook</a> for what to build with it. Read how we <a href="bhai-lang/">taught a model bhai-lang in 40 minutes</a> &mdash; or <a href="ios/">put your model on an iPhone</a> &mdash; or <a href="mesh/">let your iPhones make the dataset</a>.</p>
   </div>
 </section>
 

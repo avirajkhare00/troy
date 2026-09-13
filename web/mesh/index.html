@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Troy Mesh</title>
+<meta name="description" content="troy mesh turns idle iPhones and Macs on your Wi-Fi into a training-data cluster. Phones run a local teacher model and generate the dataset; your Mac coordinates, validates, and trains.">
+<meta property="og:title" content="Your idle iPhones are a data-generation cluster.">
+<meta property="og:description" content="troy mesh serve on the Mac, the TroyWorker app on every iPhone — the phones generate the training data, the Mac validates and trains. All local, all on hardware you already own.">
+<meta property="og:image" content="https://gettroy.app/assets/og.png">
+<meta property="og:url" content="https://gettroy.app/mesh/">
+<meta property="og:type" content="article">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../assets/favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;600;700&display=swap">
+<link rel="stylesheet" href="../styles.css?v=2">
+</head>
+<body>
+
+<header class="site-head">
+  <div class="wrap head-row">
+    <a class="wordmark" href="../"><img src="../assets/logo.svg" alt="">troy</a>
+    <nav class="head-nav">
+      <a href="../#workflow">Workflow</a>
+      <a href="../cookbook/">Cookbook</a>
+      <a href="../ios/">iPhone</a>
+      <a href="https://github.com/avirajkhare00/troy" class="gh-link">GitHub<span class="gh-star">★</span></a>
+      <a class="head-install mono" href="../#install">brew install troy</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <p class="eyebrow">mesh · distributed synthesis · LAN</p>
+      <h1>Your idle iPhones are a data-generation cluster.</h1>
+      <p class="lede">A phone on a charger is a multi-TFLOPS GPU doing nothing.
+      <span class="mono">troy mesh</span> puts it to work: every iPhone and Mac on your Wi-Fi runs a
+      local teacher model and generates training data, while your Mac only coordinates &mdash;
+      minting prompts, rejecting duplicates, validating every record. The output is a normal
+      <span class="mono">train.jsonl</span>, ready for <span class="mono">troy train</span>.</p>
+    </div>
+    <figure class="terminal recipe-term">
+      <figcaption class="term-bar"><span class="term-dot red"></span><span class="term-dot yellow"></span><span class="term-dot green"></span><span class="term-title mono">troy mesh serve &mdash; zsh</span></figcaption>
+<pre class="term-body mono"><span class="t-cmd">$ troy mesh serve --from ./docs --n 50</span>
+<span class="t-out">Join from a Mac:  troy mesh join</span>
+<span class="t-out">  http://192.168.1.3:8766 --token wZ3…</span>
+<span class="t-out">Join from iPhone: TroyWorker app</span>
+<span class="t-out"> </span>
+<span class="t-out">troy mesh — 50/50 records</span>
+<span class="t-out">  worker    records   dupes   last seen</span>
+<span class="t-ok">  iPhone         50       1      0s ago</span>
+<span class="t-dim">1.2 rec/min · wrote data/train.jsonl</span></pre>
+      <figcaption class="term-note">Actual first run &mdash; one iPhone 17 Pro generated the whole
+      dataset with an on-device Qwen3-4B teacher.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="section recipe">
+  <div class="wrap">
+    <h2>Three commands, one shared token</h2>
+    <p class="section-lede">The coordinator is just bookkeeping &mdash; it never loads a model, so any
+    Mac can run it. All the GPU work happens on the workers.</p>
+    <ol class="steps">
+      <li>
+        <code class="mono step-cmd">troy mesh serve --from ./docs --n 500</code>
+        <p>On the Mac. Mints teacher prompts from your documents (or a <span class="mono">--seed</span>
+        task description, or <span class="mono">-f tools</span> schemas &mdash; everything
+        <span class="mono">troy data synth</span> can do), prints a join URL + token, and shows a live
+        table of workers and throughput.</p>
+      </li>
+      <li>
+        <code class="mono step-cmd">TroyWorker &nbsp;·&nbsp; troy mesh join</code>
+        <p>On every device you want working. iPhones use the
+        <a href="https://github.com/avirajkhare00/troy/tree/main/examples/ios/TroyWorker">TroyWorker</a>
+        app &mdash; enter the URL and token, load a teacher from the Hub, tap Start. Other Macs join with
+        one command. Mix freely; the mesh doesn&rsquo;t care what a worker is.</p>
+      </li>
+      <li>
+        <code class="mono step-cmd">troy data validate &nbsp;·&nbsp; troy train</code>
+        <p>The output is byte-identical to local synthesis &mdash; the coordinator validates every record
+        with the exact <span class="mono">data synth</span> code path. Spot-check it, then train.
+        Phones make the dataset, the Mac trains on it, the phones run the result.</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<section class="section section-alt recipe">
+  <div class="wrap">
+    <h2>Built for devices that come and go</h2>
+    <p class="section-lede">Phones lock, background, overheat, and wander off. The mesh assumes all of
+    it &mdash; the design is pull-based and stateless on the worker side:</p>
+    <div class="table-scroll">
+      <table class="mem-table">
+        <tbody>
+          <tr><td><strong>Workers are dumb</strong></td><td>the coordinator renders every teacher prompt server-side; a worker just completes text and sends it back. Your source material and tool schemas never leave the Mac &mdash; phones only ever see one prompt at a time</td></tr>
+          <tr><td><strong>Leases, not assignments</strong></td><td>every work item has a timeout. A phone that locks mid-generation simply loses the lease; the item requeues and another worker picks it up. Kill any worker mid-run and the count still gets there</td></tr>
+          <tr><td><strong>Central validation</strong></td><td>malformed JSON, invented tool calls, and duplicates are rejected on the Mac &mdash; a flaky worker can waste its own time, but it can&rsquo;t poison the dataset</td></tr>
+          <tr><td><strong>Ctrl-C-safe</strong></td><td>records append to disk as they arrive. Stop the coordinator at 300/500 and you have 300 valid records</td></tr>
+          <tr><td><strong>Zero dependencies</strong></td><td>stdlib HTTP, one bearer token, LAN-only by design. No accounts, no cloud, no telemetry &mdash; the same deal as the rest of Troy</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="section recipe">
+  <div class="wrap">
+    <h2>Why data generation, not distributed training</h2>
+    <p class="section-lede">The obvious mesh idea &mdash; shard the model, train a layer per phone &mdash;
+    dies on contact with reality: pipeline training needs every device up simultaneously with
+    microsecond links, and iOS suspends backgrounded apps. So the mesh runs the workload that
+    actually fits idle phones:</p>
+    <ol class="steps">
+      <li>
+        <code class="mono step-cmd">inference-shaped work</code>
+        <p>Generating a training record is one prompt in, one completion out &mdash; seconds long,
+        embarrassingly parallel, restartable, and verifiable. Exactly the shape a flaky fleet of
+        phones can handle. Gradient-shaped work is none of those things.</p>
+      </li>
+      <li>
+        <code class="mono step-cmd">volume from a competent teacher</code>
+        <p>A phone runs a 4B teacher; your Mac might run a 14B one. For style, format, and
+        tool-calling data &mdash; most of what fine-tuning needs &mdash; a competent teacher at high
+        volume beats a frontier teacher you can only afford to run briefly.</p>
+      </li>
+      <li>
+        <code class="mono step-cmd">the loop stays local</code>
+        <p>Nothing leaves your network: not your documents, not the generated data, not the model.
+        The same privacy story as Troy itself, now spread across every Apple device you own.</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap install-final">
+    <h2>A drawer full of old iPhones is compute now.</h2>
+    <code class="install-cmd mono" title="brew install avirajkhare00/troy/troy">brew install troy<button class="copy-btn" aria-label="Copy install command" onclick="copyInstall(this)">copy</button></code>
+    <p class="hero-fineprint">Then <span class="mono">troy mesh serve</span> on the Mac and
+    <a href="https://github.com/avirajkhare00/troy/tree/main/examples/ios/TroyWorker">TroyWorker</a>
+    on the phones. Running the result on-device too? That&rsquo;s the
+    <a href="../ios/">iPhone page</a>.</p>
+  </div>
+</section>
+
+</main>
+
+<footer class="site-foot">
+  <div class="wrap foot-row">
+    <span class="wordmark small">troy</span>
+    <span>Built on <a href="https://github.com/ml-explore/mlx-lm">MLX</a> · Apache-2.0 · <a href="https://github.com/avirajkhare00/troy">Star it on GitHub</a></span>
+  </div>
+</footer>
+
+<script>
+function copyInstall(btn){
+  navigator.clipboard.writeText("brew install avirajkhare00/troy/troy").then(function(){
+    btn.textContent = "copied";
+    setTimeout(function(){ btn.textContent = "copy"; }, 1600);
+  });
+}
+</script>
+</body>
+</html>
