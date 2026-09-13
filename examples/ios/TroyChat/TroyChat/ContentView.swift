@@ -151,7 +151,12 @@ struct ContentView: View {
     private func load() async {
         await store.load(hubRepo: hubRepo)
         if case .ready(let container, _) = store.state {
-            session = ChatSession(container)
+            // Cap generation and disable Qwen3 thinking (when the model
+            // supports the flag) so replies stay fast on-device.
+            session = ChatSession(
+                container,
+                generateParameters: .init(maxTokens: 700),
+                additionalContext: ["enable_thinking": false])
         }
     }
 
