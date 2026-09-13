@@ -74,3 +74,50 @@ def test_explicit_valid_file(tmp_path):
     write_jsonl(v, [{"text": "b"}] * 2)
     train, valid, _ = load_and_prepare(DataConfig(train=str(t), valid=str(v)), "sft")
     assert len(train) == 6 and len(valid) == 2
+
+
+def test_validate_clean_file(tmp_path):
+    from troy.data import validate_records
+
+    f = tmp_path / "t.jsonl"
+    write_jsonl(f, [{"instruction": f"q{i}", "output": f"a{i}"} for i in range(5)])
+    report = validate_records(str(f))
+    assert report["format"] == "alpaca"
+    assert report["records"] == 5
+    assert report["issues"] == []
+
+
+def test_validate_catches_problems(tmp_path):
+    from troy.data import validate_records
+
+    f = tmp_path / "t.jsonl"
+    rows = [
+        {"instruction": "q", "output": "a"},          # ok
+        {"instruction": "", "output": "a"},           # empty field
+        {"prompt": "p", "completion": "c"},           # mixed format
+        {"instruction": "q", "output": "a"},          # duplicate of line 1
+    ]
+    with open(f, "w") as fh:
+        for r in rows:
+            fh.write(json.dumps(r) + "\n")
+        fh.write("{broken json\n")
+
+    report = validate_records(str(f))
+    text = "\n".join(report["issues"])
+    assert "empty or missing `instruction`" in text
+    assert "format `completions`" in text
+    assert "duplicate of line 1" in text
+    assert "invalid JSON" in text
+    assert report["duplicates"] == 1
+
+
+def test_validate_preference_and_chat(tmp_path):
+    from troy.data import validate_records
+
+    f = tmp_path / "p.jsonl"
+    write_jsonl(f, [{"prompt": "p", "chosen": "same", "rejected": "same"}])
+    assert "chosen == rejected" in validate_records(str(f))["issues"][0]
+
+    f2 = tmp_path / "c.jsonl"
+    write_jsonl(f2, [{"messages": [{"role": "user", "content": "hi"}]}])
+    assert "no assistant message" in validate_records(str(f2))["issues"][0]

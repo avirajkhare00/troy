@@ -1,6 +1,6 @@
 ---
 name: troy
-description: Fine-tune LLMs locally on Apple Silicon Macs with the Troy CLI (gettroy.app). Use when the user wants to fine-tune, LoRA/QLoRA-train, preference-tune (DPO/ORPO), or vision-tune a model on a Mac; asks about troy, troy.yaml, or MLX fine-tuning; or wants to chat with / serve / evaluate / export (GGUF, Ollama) / upload a locally trained model.
+description: Fine-tune LLMs locally on Apple Silicon Macs with the Troy CLI (gettroy.app). Use when the user wants to fine-tune, LoRA/QLoRA-train, preference-tune (DPO/ORPO), or vision-tune a model on a Mac; asks about troy, troy.yaml, or MLX fine-tuning; wants to synthesize/generate a training dataset from docs or a task description; or wants to chat with / serve / evaluate / export (GGUF, Ollama) / upload a locally trained model.
 ---
 
 # Troy: fine-tune LLMs on a Mac
@@ -31,8 +31,31 @@ troy eval [-p "prompt"]                 # base-vs-tuned loss/ppl + samples
 troy serve [--port 8080]                # OpenAI-compatible API on localhost
 troy export [-f gguf]                   # fuse adapter; MLX or GGUF output
 troy push user/repo [--fused --public]  # upload to Hugging Face Hub
+troy data synth --from ./docs           # synthesize train.jsonl (local teacher)
+troy data validate file.jsonl           # lint: broken/empty/duplicate records
 troy data inspect file.jsonl            # record count + detected format
 ```
+
+## No dataset? Synthesize one (troy data synth)
+
+```bash
+troy data synth --from ./docs --n 200                      # Q&A grounded in files
+troy data synth --seed "support bot for Acme" --n 200      # from a description
+troy data synth --from ./docs --seed "..." -f preference   # DPO/ORPO pairs
+```
+
+- Runs a local teacher via mlx-lm — nothing leaves the Mac. `--teacher auto`
+  (default) sizes the teacher to unified memory (16 GB → Qwen3-4B-4bit;
+  teachers can be larger than trainable models since they only infer).
+- `--from` accepts a file or folder (md/txt/code/config files; hidden dirs
+  skipped); content is chunked and every example grounded in a chunk.
+  `--seed` sets the task framing; combine both for best results.
+- Output: chat format (default, for sft) or `-f preference`
+  (prompt/chosen/rejected, for dpo/orpo). Default path data/train.jsonl or
+  data/preferences.jsonl; refuses to overwrite (use -o).
+- ALWAYS spot-check a dozen examples and run `troy data validate` before
+  training — synthetic data inherits teacher mistakes.
+- Short output or 0 examples → larger --teacher, higher --max-tokens.
 
 ## The config (troy.yaml)
 

@@ -1,7 +1,7 @@
 {
   "name": "troy",
   "description": "Fine-tune LLMs locally on Apple Silicon with the Troy CLI — config schema, workflow, and verified recipes for Claude.",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "author": { "name": "avirajkhare00" },
   "homepage": "https://gettroy.app",
   "repository": "https://github.com/avirajkhare00/troy",

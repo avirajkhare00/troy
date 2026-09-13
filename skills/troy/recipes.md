@@ -34,3 +34,9 @@ vs DPO's 1.3–2.0 on identical data; no reference model in the math.
 `{"file_name","question","answer"}`. base mlx-community/Qwen2-VL-2B-Instruct-4bit,
 batch 1, lr 1e-4. Verified: 2.4 GB peak; correct answers on unseen images via
 `troy chat --image`.
+
+## 08 Docs → dataset → model (data synth + sft)
+No hand-written data: `troy data synth --from ./README.md --seed "answering
+questions about <project>" --n 100`, spot-check + `troy data validate`, then
+`troy train`. Verified on 16 GB (teacher Qwen3-4B-4bit): grounded Q&A pairs,
+0 validation issues. Preference variant: `-f preference` → `task: orpo`.

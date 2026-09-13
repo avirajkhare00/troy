@@ -152,6 +152,120 @@ def load_and_prepare(
     return train, valid, fmt
 
 
+# Required non-empty string fields per format (nested fields checked separately).
+_REQUIRED_FIELDS = {
+    "alpaca": ("instruction", "output"),
+    "completions": ("prompt", "completion"),
+    "preference": ("prompt", "chosen", "rejected"),
+    "text": ("text",),
+}
+
+
+def _record_issues(record: Dict[str, Any], fmt: str, line: int) -> List[str]:
+    issues = []
+
+    def empty(v: Any) -> bool:
+        return not (isinstance(v, str) and v.strip())
+
+    for field in _REQUIRED_FIELDS.get(fmt, ()):
+        if empty(record.get(field)):
+            issues.append(f"line {line}: empty or missing `{field}`")
+    if fmt == "chat":
+        msgs = record.get("messages")
+        if not isinstance(msgs, list) or not msgs:
+            issues.append(f"line {line}: `messages` is not a non-empty list")
+        else:
+            roles = [m.get("role") for m in msgs if isinstance(m, dict)]
+            if "assistant" not in roles:
+                issues.append(f"line {line}: no assistant message")
+            if any(
+                not isinstance(m, dict) or empty(m.get("content"))
+                for m in msgs
+            ):
+                issues.append(f"line {line}: message with empty content")
+    if fmt == "sharegpt":
+        convs = record.get("conversations")
+        if not isinstance(convs, list) or not convs:
+            issues.append(f"line {line}: `conversations` is not a non-empty list")
+        else:
+            bad = [
+                m.get("from")
+                for m in convs
+                if not isinstance(m, dict)
+                or str(m.get("from", "")).lower() not in _SHAREGPT_ROLES
+            ]
+            if bad:
+                issues.append(f"line {line}: unknown speaker role(s): {bad}")
+    if fmt == "preference" and not issues:
+        if record["chosen"].strip() == record["rejected"].strip():
+            issues.append(f"line {line}: chosen == rejected")
+    return issues
+
+
+def validate_records(path: str, max_issues: int = 50) -> Dict[str, Any]:
+    """Lint a dataset: per-record issues, mixed formats, duplicates.
+
+    Returns {"records", "format", "issues", "duplicates", "truncated"}.
+    """
+    p = Path(path).expanduser()
+    issues: List[str] = []
+    records: List[Tuple[int, Dict[str, Any]]] = []
+
+    if p.suffix.lower() == ".jsonl":
+        with open(p) as f:
+            for i, line in enumerate(f, 1):
+                if not line.strip():
+                    continue
+                try:
+                    records.append((i, json.loads(line)))
+                except json.JSONDecodeError as e:
+                    issues.append(f"line {i}: invalid JSON ({e.msg})")
+    else:
+        records = [(i, r) for i, r in enumerate(_read_records(p), 1)]
+
+    if not records:
+        return {
+            "records": 0, "format": "unknown", "issues": issues or ["file has no records"],
+            "duplicates": 0, "truncated": False,
+        }
+
+    try:
+        fmt = detect_format(records[0][1])
+    except ValueError as e:
+        return {
+            "records": len(records), "format": "unknown",
+            "issues": issues + [str(e)], "duplicates": 0, "truncated": False,
+        }
+
+    seen: Dict[str, int] = {}
+    duplicates = 0
+    for line, record in records:
+        try:
+            rec_fmt = detect_format(record)
+        except ValueError:
+            issues.append(f"line {line}: keys match no known format")
+            continue
+        if rec_fmt != fmt:
+            issues.append(f"line {line}: format `{rec_fmt}` (file is `{fmt}`)")
+            continue
+        issues.extend(_record_issues(record, fmt, line))
+        key = json.dumps(record, sort_keys=True)
+        if key in seen:
+            duplicates += 1
+            issues.append(f"line {line}: exact duplicate of line {seen[key]}")
+        else:
+            seen[key] = line
+
+    truncated = len(issues) > max_issues
+    return {
+        "records": len(records),
+        "format": fmt,
+        "issues": issues[:max_issues],
+        "duplicates": duplicates,
+        "truncated": truncated,
+    }
+
+
 def inspect_stats(path: str) -> Dict[str, Any]:
     """Lightweight dataset statistics for `troy data inspect`-style output."""
     records = _read_records(Path(path).expanduser())

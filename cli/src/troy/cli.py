@@ -319,15 +319,19 @@ def push(
     run_push(folder, repo, private=not public)
 
 
-@app.command()
-def data(
-    action: str = typer.Argument(help="Action: inspect"),
+data_app = typer.Typer(
+    name="data",
+    help="Inspect, validate, and synthesize datasets.",
+    no_args_is_help=True,
+)
+app.add_typer(data_app)
+
+
+@data_app.command()
+def inspect(
     path: Path = typer.Argument(help="Dataset file (.jsonl, .json, .csv)."),
 ) -> None:
     """Inspect a dataset: record count, detected format, sizes."""
-    if action != "inspect":
-        console.print("[red]Only `troy data inspect <path>` is supported.[/red]")
-        raise typer.Exit(1)
     from .data import inspect_stats
 
     stats = inspect_stats(str(path))
@@ -339,6 +343,93 @@ def data(
     table.add_row("Avg record size", f"{stats['avg_chars']:.0f} chars")
     table.add_row("Max record size", f"{stats['max_chars']} chars")
     console.print(table)
+
+
+@data_app.command()
+def validate(
+    path: Path = typer.Argument(help="Dataset file (.jsonl, .json, .csv)."),
+) -> None:
+    """Lint a dataset: broken records, mixed formats, empty fields, duplicates."""
+    from .data import validate_records
+
+    report = validate_records(str(path))
+    console.print(
+        f"{report['records']} records, format: [bold]{report['format']}[/bold]"
+    )
+    if not report["issues"]:
+        console.print("[green]No issues found.[/green]")
+        return
+    for issue in report["issues"]:
+        console.print(f"  [yellow]•[/yellow] {issue}")
+    if report["truncated"]:
+        console.print("  [dim]... more issues not shown[/dim]")
+    console.print(f"[red]{len(report['issues'])}{'+' if report['truncated'] else ''} issue(s).[/red]")
+    raise typer.Exit(1)
+
+
+@data_app.command()
+def synth(
+    source: Optional[Path] = typer.Option(
+        None, "--from", help="Ground examples in a file or folder of docs/code."
+    ),
+    seed: Optional[str] = typer.Option(
+        None, "--seed", help='Task description, e.g. "customer support bot for Acme".'
+    ),
+    n: int = typer.Option(100, "--n", help="Number of examples to generate."),
+    fmt: str = typer.Option(
+        "chat", "--format", "-f",
+        help="Output format: chat (SFT) or preference (DPO/ORPO).",
+    ),
+    teacher: str = typer.Option(
+        "auto", help="Teacher model (auto = sized to this Mac's memory)."
+    ),
+    out: Optional[Path] = typer.Option(
+        None, "--out", "-o",
+        help="Output file (default: data/train.jsonl or data/preferences.jsonl).",
+    ),
+    max_tokens: int = typer.Option(2048, help="Max tokens per teacher call."),
+    temperature: float = typer.Option(0.8),
+) -> None:
+    """Synthesize a training dataset with a local teacher model."""
+    _require_apple_silicon()
+    if source is None and seed is None:
+        console.print(
+            '[red]Give the teacher something to work from:[/red] '
+            '--from ./docs and/or --seed "task description".'
+        )
+        raise typer.Exit(1)
+    if fmt not in ("chat", "preference"):
+        console.print("[red]--format must be `chat` or `preference`.[/red]")
+        raise typer.Exit(1)
+
+    from .synth import pick_teacher, run_synth
+
+    if teacher == "auto":
+        teacher = pick_teacher()
+        console.print(f"Teacher: [bold]{teacher}[/bold] (picked for this Mac's memory)")
+    out = out or Path("data") / ("preferences.jsonl" if fmt == "preference" else "train.jsonl")
+    if out.exists():
+        console.print(f"[red]{out} already exists[/red] — pass -o to write elsewhere.")
+        raise typer.Exit(1)
+
+    stats = run_synth(
+        n=n, out_path=out, fmt=fmt, teacher=teacher,
+        seed_task=seed, source=source,
+        max_tokens=max_tokens, temperature=temperature,
+    )
+    console.print(
+        f"\nWrote [bold]{stats['records']}[/bold] examples to [bold]{stats['out']}[/bold] "
+        f"({stats['teacher_calls']} teacher calls)"
+    )
+    if stats["records"] < stats["requested"]:
+        console.print(
+            f"[yellow]Stopped at {stats['records']}/{stats['requested']} — "
+            "try a larger --teacher, higher --max-tokens, or more source material.[/yellow]"
+        )
+    console.print(
+        "Review the data before training — spot-check a dozen examples, then: "
+        "[bold]troy data validate " + str(out) + "[/bold] and [bold]troy train[/bold]."
+    )
 
 
 if __name__ == "__main__":

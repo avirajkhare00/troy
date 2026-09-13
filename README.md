@@ -27,6 +27,7 @@ brew install avirajkhare00/troy/troy   # or: pipx install troy-cli
 
 troy doctor            # check your Mac: chip, memory, MLX, what you can train
 troy init              # create troy.yaml + sample data
+troy data synth --from ./docs   # no dataset? synthesize one with a local teacher
 troy train             # fine-tune (LoRA/QLoRA via MLX)
 troy chat              # talk to the result
 troy eval              # did it work? base-vs-tuned loss + samples
