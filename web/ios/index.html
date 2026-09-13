@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Troy on iPhone</title>
+<meta name="description" content="Fine-tune on your Mac, run it on your iPhone. troy export -f ios packages a model for MLX Swift — validated architecture, tokenizer, and iPhone memory fit. Fully offline, tool calls and all.">
+<meta property="og:title" content="Train on your Mac. Run it on your iPhone.">
+<meta property="og:description" content="troy export -f ios packages a fine-tuned model for MLX Swift apps — validated against what an iPhone can actually load. Fully offline, tool calling included.">
+<meta property="og:image" content="https://gettroy.app/assets/og.png">
+<meta property="og:url" content="https://gettroy.app/ios/">
+<meta property="og:type" content="article">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../assets/favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;600;700&display=swap">
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+
+<header class="site-head">
+  <div class="wrap head-row">
+    <a class="wordmark" href="../"><img src="../assets/logo.svg" alt="">troy</a>
+    <nav class="head-nav">
+      <a href="../#workflow">Workflow</a>
+      <a href="../cookbook/">Cookbook</a>
+      <a href="../bhai-lang/">Case study</a>
+      <a href="https://github.com/avirajkhare00/troy" class="gh-link">GitHub<span class="gh-star">★</span></a>
+      <a class="head-install mono" href="../#install">brew install troy</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<section class="hero cook-hero">
+  <div class="wrap">
+    <p class="eyebrow">iOS · MLX Swift · on-device</p>
+    <h1>Train on your Mac. Run it on your iPhone.</h1>
+    <p class="lede">The model you fine-tuned with Troy doesn&rsquo;t have to stay on the Mac.
+    <span class="mono">troy export -f ios</span> packages it for
+    <a href="https://github.com/ml-explore/mlx-swift-lm">MLX Swift</a> &mdash; the same weights,
+    generating on the iPhone&rsquo;s GPU, with no server and no network. Airplane mode is the demo.</p>
+  </div>
+</section>
+
+<section class="section recipe">
+  <div class="wrap">
+    <h2>One command, validated for the phone</h2>
+    <p class="section-lede">Fusing the adapter is the easy half. The exporter also checks the three
+    things that decide whether an iPhone will actually load the result &mdash; before you find out in Xcode.</p>
+    <div class="recipe-grid">
+      <figure class="terminal recipe-term">
+        <figcaption class="term-bar"><span class="term-dot red"></span><span class="term-dot yellow"></span><span class="term-dot green"></span><span class="term-title mono">troy export -f ios &mdash; zsh</span></figcaption>
+<pre class="term-body mono"><span class="t-cmd">$ troy export -f ios</span>
+<span class="t-out">Fusing adapter into base model ...</span>
+<span class="t-out">Fused model: ./output/fused</span>
+<span class="t-out">Weights: 0.97 GB (quantized), model_type: qwen3</span>
+<span class="t-ok">iPhone fit: comfortable — loads on recent iPhones</span>
+<span class="t-dim">Wrote output/fused/README-iOS.md</span></pre>
+        <figcaption class="term-note">Actual output &mdash; a fine-tuned Qwen3-1.7B, 4-bit.</figcaption>
+      </figure>
+      <div>
+        <div class="table-scroll">
+          <table class="mem-table">
+            <tbody>
+              <tr><td><strong>Architecture</strong></td><td>the fused <span class="mono">model_type</span> must be in mlx-swift-lm&rsquo;s registry (~60 architectures: Qwen, Llama, Gemma, Phi, Mistral, &hellip;)</td></tr>
+              <tr><td><strong>Tokenizer</strong></td><td><span class="mono">tokenizer.json</span> + <span class="mono">tokenizer_config.json</span> present &mdash; swift-transformers builds the tokenizer from them on device</td></tr>
+              <tr><td><strong>Memory fit</strong></td><td>&le;&nbsp;~2&nbsp;GB loads comfortably; up to ~4&nbsp;GB needs the Increased Memory Limit entitlement; beyond that it says so plainly</td></tr>
+              <tr><td><strong>README-iOS.md</strong></td><td>written into the export: the Swift loading snippet and the Xcode entitlement steps</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="basemodel-note">Rule of thumb: train from a 4-bit base and keep weights under
+        ~4&nbsp;GB for 8&nbsp;GB-RAM iPhones. <span class="mono">troy export -f ios</span> tells you where you stand.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-alt recipe">
+  <div class="wrap">
+    <h2>The Swift side is a dozen lines</h2>
+    <p class="section-lede">The export is a folder <a href="https://github.com/ml-explore/mlx-swift-lm">mlx-swift-lm</a>
+    loads directly &mdash; bundle it for development, or <span class="mono">troy push</span> it and download on first launch.</p>
+    <div class="recipe-grid">
+      <figure class="codecard">
+        <figcaption class="codecard-title mono">load &amp; chat &mdash; MLX Swift</figcaption>
+<pre class="mono"><code><span class="k">import</span> MLXLLM
+<span class="k">import</span> MLXLMCommon
+<span class="k">import</span> MLXHuggingFace
+
+<span class="c">// the troy export -f ios folder:</span>
+<span class="k">let</span> model = <span class="k">try await</span> loadModelContainer(
+    from: modelDirectoryURL,
+    using: #huggingFaceTokenizerLoader())
+
+<span class="k">let</span> session = ChatSession(model)
+<span class="k">for try await</span> chunk <span class="k">in</span>
+    session.streamResponse(to: prompt) {
+  <span class="c">// tokens stream as they generate</span>
+}</code></pre>
+      </figure>
+      <figure class="codecard">
+        <figcaption class="codecard-title mono">tool calling &mdash; same session</figcaption>
+<pre class="mono"><code><span class="c">// the model calls YOUR Swift code</span>
+<span class="k">let</span> session = ChatSession(
+  model,
+  instructions: systemPrompt,
+  tools: toolSchemas,        <span class="c">// JSON specs</span>
+  toolDispatch: { call <span class="k">in</span>
+    <span class="c">// run the tool, return JSON —</span>
+    <span class="c">// the session feeds it back and</span>
+    <span class="c">// generation continues</span>
+    <span class="k">try await</span> dispatch(call)
+  })</code></pre>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section class="section recipe">
+  <div class="wrap">
+    <h2>Tool calling is the fine-tune that matters on a phone</h2>
+    <p class="section-lede">Small models run on iPhones; small models are also unreliable tool callers
+    out of the box &mdash; wrong argument names, invented tools, malformed JSON. That gap is exactly what a
+    LoRA closes, and it&rsquo;s measurable, not vibes. Troy ships the whole loop:</p>
+    <ol class="steps">
+      <li>
+        <code class="mono step-cmd">troy data synth -f tools</code>
+        <p>Point it at your tool schemas and a task description; a local teacher writes validated
+        scenarios &mdash; direct calls, multi-step chains, clarifying questions for missing arguments,
+        and answers that need no tool &mdash; each with a short <span class="mono">&lt;think&gt;</span> reasoning trace.</p>
+      </li>
+      <li>
+        <code class="mono step-cmd">troy train &nbsp;·&nbsp; troy export -f ios</code>
+        <p>Fine-tune a 1&ndash;2B base and package it. On our travel-planner demo, a tuned Qwen3-1.7B calls
+        the right tool with the right arguments &mdash; and asks a clarifying question when the request is missing one.</p>
+      </li>
+      <li>
+        <code class="mono step-cmd">examples/ios</code>
+        <p>Two working SwiftUI apps in the repo: <a href="https://github.com/avirajkhare00/troy/tree/main/examples/ios/TroyChat">TroyChat</a>
+        (chat with any Troy export) and <a href="https://github.com/avirajkhare00/troy/tree/main/examples/ios/TroyTravel">TroyTravel</a>
+        (a trip planner whose tool calls build a live itinerary &mdash; mock data, real tool calling).</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<section class="section section-alt recipe">
+  <div class="wrap">
+    <h2>The gotchas, so you skip them</h2>
+    <p class="section-lede">Everything below bit us while building the example apps. It&rsquo;s all
+    handled or documented in the repo &mdash; the short version:</p>
+    <ol class="steps">
+      <li>
+        <code class="mono step-cmd">physical device only</code>
+        <p>MLX kernels need a real GPU; the iOS simulator has none. Xcode&nbsp;26 also needs two one-time
+        downloads: the iOS platform and the Metal Toolchain (<span class="mono">xcodebuild -downloadComponent MetalToolchain</span>).</p>
+      </li>
+      <li>
+        <code class="mono step-cmd">memory entitlements</code>
+        <p>Models over ~2&nbsp;GB need Increased Memory Limit. Free personal teams can&rsquo;t sign
+        Extended Virtual Addressing &mdash; the example apps ship without it. Keep MLX&rsquo;s cache
+        small on iOS: cached buffers count against the app&rsquo;s memory limit.</p>
+      </li>
+      <li>
+        <code class="mono step-cmd">match training at inference</code>
+        <p>Greedy decoding keeps a small fine-tune&rsquo;s tool-calling deterministic. And if your
+        training data has empty think blocks, disable thinking at inference &mdash; or synthesize traces
+        with <span class="mono">troy data synth -f tools</span> so the model learns to think <em>and stop</em>.</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap install-final">
+    <h2>The whole loop is local: Mac trains, iPhone runs.</h2>
+    <code class="install-cmd mono" title="brew install avirajkhare00/troy/troy">brew install troy<button class="copy-btn" aria-label="Copy install command" onclick="copyInstall(this)">copy</button></code>
+    <p class="hero-fineprint">Then <span class="mono">troy train</span>, <span class="mono">troy export -f ios</span>,
+    and open <a href="https://github.com/avirajkhare00/troy/tree/main/examples/ios">examples/ios</a> in Xcode.
+    New to Troy? Start with the <a href="../cookbook/">cookbook</a>.</p>
+  </div>
+</section>
+
+</main>
+
+<footer class="site-foot">
+  <div class="wrap foot-row">
+    <span class="wordmark small">troy</span>
+    <span>Built on <a href="https://github.com/ml-explore/mlx-lm">MLX</a> · Apache-2.0 · <a href="https://github.com/avirajkhare00/troy">Star it on GitHub</a></span>
+  </div>
+</footer>
+
+<script>
+function copyInstall(btn){
+  navigator.clipboard.writeText("brew install avirajkhare00/troy/troy").then(function(){
+    btn.textContent = "copied";
+    setTimeout(function(){ btn.textContent = "copy"; }, 1600);
+  });
+}
+</script>
+</body>
+</html>
