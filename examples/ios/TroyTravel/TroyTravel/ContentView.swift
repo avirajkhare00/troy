@@ -5,6 +5,19 @@ struct ChatMessage: Identifiable {
     let id = UUID()
     let role: String  // "user" | "assistant" | "tool"
     var text: String
+
+    /// Streamed text with reasoning stripped: hide everything up to a
+    /// `</think>` tag, and show a placeholder while a `<think>` is open.
+    var visibleText: String {
+        if let range = text.range(of: "</think>", options: .backwards) {
+            return String(text[range.upperBound...])
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+        if text.contains("<think>") { return "" }
+        return text
+    }
+
+    var isThinking: Bool { text.contains("<think>") && !text.contains("</think>") }
 }
 
 struct ContentView: View {
@@ -160,7 +173,7 @@ struct ContentView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
             } else {
-                Text(message.text.isEmpty ? "…" : message.text)
+                Text(markdown(message.isThinking ? "thinking…" : message.visibleText))
                     .padding(10)
                     .background(
                         message.role == "user"
@@ -170,6 +183,22 @@ struct ContentView: View {
             if message.role != "user" { Spacer(minLength: 40) }
         }
         .id(message.id)
+    }
+
+    /// Render inline markdown (bold/italic/code); headers become bold lines.
+    private func markdown(_ text: String) -> AttributedString {
+        guard !text.isEmpty else { return AttributedString("…") }
+        let cleaned = text
+            .split(separator: "\n", omittingEmptySubsequences: false)
+            .map { line -> String in
+                let l = line.drop(while: { $0 == "#" })
+                return line.first == "#" ? "**\(l.trimmingCharacters(in: .whitespaces))**" : String(line)
+            }
+            .joined(separator: "\n")
+        return (try? AttributedString(
+            markdown: cleaned,
+            options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace)))
+            ?? AttributedString(text)
     }
 
     private func load() async {
