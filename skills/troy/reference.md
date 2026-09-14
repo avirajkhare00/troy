@@ -14,10 +14,14 @@ Dispatches on config: task sft/dpo/orpo; `data.train` folder → vision SFT.
 Adapter lands at `<output>/adapter/adapters.safetensors` (+ adapter_config.json).
 
 ## troy chat
-`troy chat [-c troy.yaml] [--model REPO] [--base-only] [-p PROMPT] [--image IMG] [--max-tokens N] [--temperature T]`
+`troy chat [-c troy.yaml] [--model REPO] [--base-only] [-p PROMPT] [--image IMG] [--tools schemas.json] [--system PROMPT] [--max-tokens N] [--temperature T]`
 - Default: REPL with the config's base + trained adapter (warns if no adapter).
 - `-p`: one-shot. `--image` (vision models): one-shot only, requires `-p`.
-- REPL commands: `/exit`, `/clear`.
+- `--tools`: JSON list of OpenAI-style function specs, rendered into the chat
+  template — REQUIRED to see `<tool_call>`s from a tool-tuned model (without
+  it the model correctly refuses, since it sees no tools). Pair with
+  `--system` set to the system prompt used in training. Not with --image.
+- REPL commands: `/exit`, `/clear` (keeps the --system message).
 
 ## troy eval
 `troy eval [-c troy.yaml] [-p PROMPT]... [--max-tokens N]`
@@ -29,7 +33,9 @@ each prompt generates base-vs-tuned side by side at temperature 0.
 `troy serve [-c troy.yaml] [--model REPO] [--base-only] [--host 127.0.0.1] [--port 8080] [--max-tokens N]`
 OpenAI-compatible: POST /v1/chat/completions, GET /v1/models. Response JSON
 puts reasoning-model thinking in `message.reasoning`; final text in
-`message.content` (give reasoning models max_tokens headroom).
+`message.content` (give reasoning models max_tokens headroom). A `tools`
+array in the request body is rendered into the chat template (mlx-lm server
+passthrough), so tool-tuned models emit `<tool_call>`s over the API too.
 
 ## troy export
 `troy export [-c troy.yaml] [-f mlx|gguf|ios] [--save-path DIR] [--dequantize]`

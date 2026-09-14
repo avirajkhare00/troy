@@ -34,9 +34,15 @@ weights plus LoRA gradients, optimizer state, and activations for
 ```bash
 cd examples/travel-tools
 troy train
-troy chat -p "Find me a flight from Delhi to Jaipur on October 2nd."
+troy chat --tools tools.json \
+  --system "$(python3 -c 'import json; print(json.loads(open("data/train.jsonl").readline())["messages"][0]["content"])')" \
+  -p "Find me a flight from Delhi to Jaipur on October 2nd."
 # expect: <tool_call>{"name": "search_flights", ...}</tool_call>
 ```
+
+`--tools` matters: without the schemas in the template the model (correctly)
+says it has no tools to call. `tools.json` holds the same schemas embedded in
+every dataset record; the `--system` line pulls the training system prompt.
 
 Run it on your iPhone with the matching demo app
 ([`examples/ios/TroyTravel`](../ios/TroyTravel/)):

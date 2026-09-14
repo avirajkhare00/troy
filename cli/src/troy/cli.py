@@ -193,10 +193,34 @@ def chat(
     temperature: float = typer.Option(0.7),
     prompt: Optional[str] = typer.Option(None, "--prompt", "-p", help="One-shot prompt (no REPL)."),
     image: Optional[Path] = typer.Option(None, help="Image for a vision model (one-shot; needs -p)."),
+    tools: Optional[Path] = typer.Option(
+        None, "--tools",
+        help="JSON file with tool schemas (OpenAI function format) — rendered "
+        "into the chat template so a tool-tuned model can emit <tool_call>s.",
+    ),
+    system: Optional[str] = typer.Option(
+        None, "--system", help="System prompt (use the one the model was trained with)."
+    ),
 ) -> None:
-    """Chat with your fine-tuned model."""
+    """Chat with your fine-tuned model (pass --tools to exercise tool calling)."""
     _require_apple_silicon()
+    import json
+
     from .chat import run_chat
+
+    tool_schemas = None
+    if tools is not None:
+        if image is not None:
+            console.print("[red]--tools and --image can't be combined.[/red]")
+            raise typer.Exit(1)
+        try:
+            tool_schemas = json.loads(tools.read_text())
+        except (OSError, json.JSONDecodeError) as e:
+            console.print(f"[red]Can't read {tools}:[/red] {e}")
+            raise typer.Exit(1)
+        if not isinstance(tool_schemas, list) or not tool_schemas:
+            console.print(f"[red]{tools} must hold a JSON list of tool schemas.[/red]")
+            raise typer.Exit(1)
 
     adapter: Optional[str] = None
     if model is None:
@@ -220,7 +244,8 @@ def chat(
 
         run_vision_chat(model, adapter, str(image), prompt, max_tokens, temperature)
         return
-    run_chat(model, adapter, max_tokens, temperature, prompt)
+    run_chat(model, adapter, max_tokens, temperature, prompt,
+             tools=tool_schemas, system=system)
 
 
 @app.command()
