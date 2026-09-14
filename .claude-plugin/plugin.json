@@ -1,10 +1,17 @@
 {
   "name": "troy",
-  "description": "Fine-tune LLMs locally on Apple Silicon with the Troy CLI — config schema, workflow, and verified recipes for Claude.",
-  "version": "0.4.0",
-  "author": { "name": "avirajkhare00" },
+  "description": "Fine-tune LLMs locally on Apple Silicon with the Troy CLI \u2014 config schema, workflow, and verified recipes for Claude.",
+  "version": "0.5.0",
+  "author": {
+    "name": "avirajkhare00"
+  },
   "homepage": "https://gettroy.app",
   "repository": "https://github.com/avirajkhare00/troy",
   "license": "Apache-2.0",
-  "keywords": ["mlx", "apple-silicon", "fine-tuning", "lora"]
+  "keywords": [
+    "mlx",
+    "apple-silicon",
+    "fine-tuning",
+    "lora"
+  ]
 }

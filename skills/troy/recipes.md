@@ -40,3 +40,12 @@ No hand-written data: `troy data synth --from ./README.md --seed "answering
 questions about <project>" --n 100`, spot-check + `troy data validate`, then
 `troy train`. Verified on 16 GB (teacher Qwen3-4B-4bit): grounded Q&A pairs,
 0 validation issues. Preference variant: `-f preference` → `task: orpo`.
+
+## 09 Mesh: phones + Macs synthesize together (mesh serve/join)
+`troy mesh serve -f tools --tools tools.json --seed "<system prompt>" --n 500`
+then `troy mesh join URL --token T` on each Mac and TroyWorker on each iPhone.
+Grow `examples/travel-tools` this way: extract the `tools` array from one
+train.jsonl record into tools.json, reuse the dataset's exact system prompt as
+--seed, write to `-o data/mesh-train.jsonl`, then merge + dedupe into
+train.jsonl. Verified: two-Mac end-to-end incl. kill-a-worker requeue
+recovery; TroyWorker on an iPhone 17 Pro.

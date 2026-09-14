@@ -23,6 +23,14 @@ exactly as they will at inference. Assistant turns emit Qwen-native
 results come back as `role: "tool"` messages. It also includes no-tool
 examples so the model learns when *not* to call.
 
+**Memory needed to train:** the ~1 GB figure above is *inference* on the
+phone; training on the Mac needs more — 4-bit QLoRA holds the quantized
+weights plus LoRA gradients, optimizer state, and activations for
+`seq_len: 2048`. Budget roughly 4–6 GB peak for this config (`batch_size: 1`),
+so an 8 GB Mac handles it and a 16 GB Mac is comfortable. `troy train` prints
+`Peak mem` as it runs — if you climb past your machine, drop `seq_len` or set
+`grad_checkpoint: true`.
+
 ```bash
 cd examples/travel-tools
 troy train

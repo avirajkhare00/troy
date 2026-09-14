@@ -1,0 +1,100 @@
+[
+  {
+    "type": "function",
+    "function": {
+      "name": "search_flights",
+      "description": "Search for flights between two cities on a date.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "from": {
+            "type": "string",
+            "description": "Departure city"
+          },
+          "to": {
+            "type": "string",
+            "description": "Destination city"
+          },
+          "date": {
+            "type": "string",
+            "description": "Date, YYYY-MM-DD"
+          }
+        },
+        "required": [
+          "from",
+          "to"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "find_hotels",
+      "description": "Find hotels in a city within a nightly budget.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "city": {
+            "type": "string",
+            "description": "City to search"
+          },
+          "max_price_usd": {
+            "type": "number",
+            "description": "Max nightly price in USD"
+          }
+        },
+        "required": [
+          "city"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "get_weather",
+      "description": "Get the weather forecast for a city.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "city": {
+            "type": "string",
+            "description": "City name"
+          }
+        },
+        "required": [
+          "city"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "add_to_itinerary",
+      "description": "Add one activity to the trip itinerary.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "day": {
+            "type": "integer",
+            "description": "Trip day number, starting at 1"
+          },
+          "time": {
+            "type": "string",
+            "description": "Time of day, e.g. 09:00"
+          },
+          "activity": {
+            "type": "string",
+            "description": "Short activity description"
+          }
+        },
+        "required": [
+          "day",
+          "activity"
+        ]
+      }
+    }
+  }
+]

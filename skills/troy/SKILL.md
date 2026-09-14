@@ -1,6 +1,6 @@
 ---
 name: troy
-description: Fine-tune LLMs locally on Apple Silicon Macs with the Troy CLI (gettroy.app). Use when the user wants to fine-tune, LoRA/QLoRA-train, preference-tune (DPO/ORPO), or vision-tune a model on a Mac; asks about troy, troy.yaml, or MLX fine-tuning; wants to synthesize/generate a training dataset from docs or a task description; wants to chat with / serve / evaluate / export (GGUF, Ollama, iOS) / upload a locally trained model; or wants to run a fine-tuned model in an iPhone/iPad app (MLX Swift), including on-device tool calling.
+description: Fine-tune LLMs locally on Apple Silicon Macs with the Troy CLI (gettroy.app). Use when the user wants to fine-tune, LoRA/QLoRA-train, preference-tune (DPO/ORPO), or vision-tune a model on a Mac; asks about troy, troy.yaml, or MLX fine-tuning; wants to synthesize/generate a training dataset from docs or a task description; wants to chat with / serve / evaluate / export (GGUF, Ollama, iOS) / upload a locally trained model; wants to run a fine-tuned model in an iPhone/iPad app (MLX Swift), including on-device tool calling; or wants to distribute dataset synthesis across iPhones/Macs on the LAN (troy mesh, TroyWorker).
 ---
 
 # Troy: fine-tune LLMs on a Mac
@@ -35,6 +35,8 @@ troy data synth --from ./docs           # synthesize train.jsonl (local teacher)
 troy data synth -f tools --tools t.json --seed "..."  # tool-calling scenarios
 troy data validate file.jsonl           # lint: broken/empty/duplicate records
 troy data inspect file.jsonl            # record count + detected format
+troy mesh serve --seed "..." --n 500    # coordinate synth across LAN devices
+troy mesh join http://IP:8765 --token T # this Mac becomes a worker
 ```
 
 ## No dataset? Synthesize one (troy data synth)
@@ -57,6 +59,28 @@ troy data synth --from ./docs --seed "..." -f preference   # DPO/ORPO pairs
 - ALWAYS spot-check a dozen examples and run `troy data validate` before
   training — synthetic data inherits teacher mistakes.
 - Short output or 0 examples → larger --teacher, higher --max-tokens.
+
+## Scale synthesis across devices (troy mesh)
+
+Same synth jobs (`chat`/`preference`/`tools`, same flags), but iPhones and
+Macs on the LAN run the teacher while the coordinator only mints prompts and
+validates results — it never loads a model, so any Mac can coordinate.
+
+```bash
+troy mesh serve -f tools --tools tools.json --seed "travel assistant" --n 500
+# prints a join URL + token, then blocks until --n validated records land:
+#   Mac worker:    troy mesh join http://192.168.x.x:8765 --token TOKEN
+#   iPhone worker: TroyWorker app (examples/ios/TroyWorker) → URL + token
+```
+
+- Validation is byte-identical to `troy data synth` (shared code path), so
+  mesh output trains the same; still spot-check and `troy data validate`.
+- Dropped workers are fine: leases requeue after `--lease-timeout` (300 s
+  default) — covers iPhones backgrounding the app (TroyWorker is
+  foreground-only; keep it open, screen stays awake).
+- Default `-o data/train.jsonl`; refuses to overwrite — `-o` elsewhere and
+  merge/dedupe yourself when growing an existing dataset.
+- Port busy → `--port`; workers and coordinator must share a LAN.
 
 ## The config (troy.yaml)
 

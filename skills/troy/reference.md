@@ -73,6 +73,22 @@ grounded in the chunks. --teacher auto picks by unified memory
 (8→Qwen3-1.7B, 16→4B, 24→8B, 36→14B, 64→30B-A3B, all 4-bit instruct).
 Dedupes on the prompt, strips think-blocks, refuses to overwrite output.
 
+## troy mesh
+`troy mesh serve [--from PATH] [--seed "TASK"] [--n 100] [-f chat|preference|tools] [--tools schemas.json] [--no-think] [-o FILE] [--max-tokens 2048] [--temperature 0.8] [--host 0.0.0.0] [--port 8765] [--token T] [--lease-timeout 300] [--linger 30]`
+Coordinates distributed synthesis: renders the same prompts as `troy data
+synth`, hands them to LAN workers over HTTP (bearer token; GET /v1/work,
+POST /v1/results, GET /v1/status), validates/dedupes results identically,
+writes the same output file. The coordinator never loads a model. Unanswered
+leases requeue after --lease-timeout; after the target is hit it lingers
+--linger seconds for in-flight results. Same --from/--seed/--tools rules as
+synth; refuses to overwrite output.
+
+`troy mesh join URL --token T [--model auto|REPO] [--name NAME] [--batch 2]`
+Runs the teacher on this Mac against a coordinator. --model auto sizes to
+this machine's memory (workers can differ). iPhone equivalent: the
+`examples/ios/TroyWorker` app — enter URL + token; foreground-only (lease
+requeue covers backgrounding).
+
 ## Memory sizing (4-bit QLoRA guidance, not a catalog)
 
 | Unified memory | Comfortable base |
