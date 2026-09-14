@@ -26,8 +26,8 @@ examples so the model learns when *not* to call.
 **Memory needed to train:** the ~1 GB figure above is *inference* on the
 phone; training on the Mac needs more — 4-bit QLoRA holds the quantized
 weights plus LoRA gradients, optimizer state, and activations for
-`seq_len: 2048`. Budget roughly 4–6 GB peak for this config (`batch_size: 1`),
-so an 8 GB Mac handles it and a 16 GB Mac is comfortable. `troy train` prints
+`seq_len: 2048`. Measured: **5.2 GB peak** for this config (`batch_size: 1`,
+429 records, 16 GB M-series Mac) — so an 8 GB Mac handles it. `troy train` prints
 `Peak mem` as it runs — if you climb past your machine, drop `seq_len` or set
 `grad_checkpoint: true`.
 
