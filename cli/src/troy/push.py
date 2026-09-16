@@ -5,7 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 
 
-def run_push(folder: Path, repo: str, private: bool = True) -> str:
+def run_push(folder: Path, repo: str, private: bool = True, force: bool = False) -> str:
     from huggingface_hub import HfApi
 
     api = HfApi()
@@ -15,6 +15,11 @@ def run_push(folder: Path, repo: str, private: bool = True) -> str:
         raise SystemExit(
             "Not logged in to Hugging Face. Run: hf auth login "
             "(or set HF_TOKEN) and retry."
+        )
+    if api.repo_exists(repo) and not force:
+        raise SystemExit(
+            f"Hub repo {repo} already exists. Re-run with --force to overwrite "
+            "its files, or choose a different repo id."
         )
     print(f"Logged in as {who['name']}. Uploading {folder} -> {repo} "
           f"({'private' if private else 'public'}) ...")

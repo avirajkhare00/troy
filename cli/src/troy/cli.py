@@ -330,6 +330,7 @@ def push(
     config: Path = typer.Option(Path("troy.yaml"), "--config", "-c", help="Config file."),
     fused: bool = typer.Option(False, help="Push the fused model instead of the adapter."),
     public: bool = typer.Option(False, help="Make the Hub repo public."),
+    force: bool = typer.Option(False, "--force", help="Overwrite files in a Hub repo that already exists."),
 ) -> None:
     """Upload your trained adapter (or fused model) to the Hugging Face Hub."""
     from .config import load_config
@@ -341,7 +342,7 @@ def push(
         what = "troy export" if fused else "troy train"
         console.print(f"[red]{folder} not found. Run `{what}` first.[/red]")
         raise typer.Exit(1)
-    run_push(folder, repo, private=not public)
+    run_push(folder, repo, private=not public, force=force)
 
 
 data_app = typer.Typer(

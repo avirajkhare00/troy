@@ -54,7 +54,9 @@ entitlements needed (Increased Memory Limit for >~2 GB of weights). For iOS,
 train from a 4-bit base and keep weights under ~4 GB; skip --dequantize.
 
 ## troy push
-`troy push USER/REPO [-c troy.yaml] [--fused] [--public]`
+`troy push USER/REPO [-c troy.yaml] [--fused] [--public] [--force]`
+
+Refuses to upload into a Hub repo that already exists unless `--force` is passed (guards against repo-id typos).
 Uploads `<output>/adapter` (default) or `<output>/fused` (--fused).
 Private by default. Requires `hf auth login` or HF_TOKEN.
 
