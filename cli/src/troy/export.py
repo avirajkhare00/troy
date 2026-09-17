@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import subprocess
 import sys
 from pathlib import Path
@@ -30,8 +31,6 @@ def _fuse(base: str, adapter_path: str, save_path: str, dequantize: bool) -> Non
 
 def _export_gguf(save_path: Path) -> Path:
     """Convert a fused MLX model directory to GGUF (llama/mistral/mixtral archs)."""
-    import json
-
     import mlx.core as mx
     from mlx_lm import gguf as gguf_mod
 
@@ -118,8 +117,6 @@ roughly 4 GB of weights. Test on the oldest device you target.
 
 
 def _base_is_quantized(base: str) -> bool:
-    import json
-
     p = Path(base)
     if not p.exists():
         from huggingface_hub import snapshot_download
@@ -160,8 +157,6 @@ def _dir_weight_bytes(save_path: Path) -> int:
 
 def _export_ios(save_path: Path) -> None:
     """Validate a fused MLX directory for mlx-swift-lm on iOS and add a how-to."""
-    import json
-
     with open(save_path / "config.json") as f:
         config = json.load(f)
 

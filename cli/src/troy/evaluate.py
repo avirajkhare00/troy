@@ -10,7 +10,6 @@ import math
 import types
 from typing import Any, Dict, List, Optional
 
-import mlx.core as mx
 from mlx_lm.generate import generate
 from mlx_lm.sample_utils import make_sampler
 from mlx_lm.tuner.datasets import CacheDataset, create_dataset

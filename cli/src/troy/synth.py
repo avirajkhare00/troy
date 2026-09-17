@@ -10,7 +10,7 @@ import json
 import re
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, Iterator, List, Optional, Set, Tuple
 
 from .hardware import detect
 
@@ -89,28 +89,33 @@ def chunk_text(text: str, size: int = 4000, overlap: int = 200) -> List[str]:
 _THINK_RE = re.compile(r"<think>.*?</think>", re.DOTALL)
 
 
-def parse_pairs(raw: str, keys: Tuple[str, ...]) -> List[Dict[str, str]]:
-    """Extract JSON objects with the given string keys from teacher output.
+def _json_objects(raw: str) -> Iterator[Dict[str, Any]]:
+    """Yield every top-level JSON object in teacher output.
 
     Tolerates thinking blocks, code fences, prose between objects, and
     objects that span multiple lines.
     """
     raw = _THINK_RE.sub("", raw)
-    pairs = []
     decoder = json.JSONDecoder()
     pos = 0
     while True:
         brace = raw.find("{", pos)
         if brace == -1:
-            break
+            return
         try:
             obj, consumed = decoder.raw_decode(raw[brace:])
             pos = brace + consumed
         except json.JSONDecodeError:
             pos = brace + 1
             continue
-        if not isinstance(obj, dict):
-            continue
+        if isinstance(obj, dict):
+            yield obj
+
+
+def parse_pairs(raw: str, keys: Tuple[str, ...]) -> List[Dict[str, str]]:
+    """Extract JSON objects with the given string keys from teacher output."""
+    pairs = []
+    for obj in _json_objects(raw):
         values = {k: obj.get(k) for k in keys}
         if all(isinstance(v, str) and v.strip() for v in values.values()):
             pairs.append({k: v.strip() for k, v in values.items()})
@@ -193,21 +198,8 @@ def parse_tool_examples(
         for s in schemas
         if isinstance(s, dict) and "function" in s
     }
-    raw = _THINK_RE.sub("", raw)
-    decoder = json.JSONDecoder()
-    out, pos = [], 0
-    while True:
-        brace = raw.find("{", pos)
-        if brace == -1:
-            break
-        try:
-            obj, consumed = decoder.raw_decode(raw[brace:])
-            pos = brace + consumed
-        except json.JSONDecodeError:
-            pos = brace + 1
-            continue
-        if not isinstance(obj, dict):
-            continue
+    out = []
+    for obj in _json_objects(raw):
         user, final = obj.get("user"), obj.get("final")
         steps = obj.get("steps", [])
         if not (isinstance(user, str) and user.strip()):
@@ -385,7 +377,7 @@ def run_synth(
 
     seen: Set[str] = set()
     records: List[Dict[str, Any]] = []
-    calls = failures = 0
+    calls = 0
     chunk_i = 0
     max_calls = (n // spec.pairs_per_call + 1) * 4
 
@@ -403,22 +395,17 @@ def run_synth(
         )
         new, parsed = ingest_raw(raw, spec, think, seen)
         if not parsed:
-            failures += 1
             continue
         records.extend(new)
         del records[n:]
         print(f"  {len(records)}/{n} examples ({calls} teacher calls)")
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    with open(out_path, "w") as f:
-        for r in records:
-            f.write(json.dumps(r, ensure_ascii=False) + "\n")
+    out_path.write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in records))
 
     return {
         "records": len(records),
         "requested": n,
         "teacher_calls": calls,
-        "empty_responses": failures,
-        "chunks": 0 if spec.chunks == [None] else len(spec.chunks),
         "out": str(out_path),
     }
