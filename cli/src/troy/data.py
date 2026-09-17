@@ -6,7 +6,7 @@ import csv
 import json
 import random
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Tuple
 
 from .config import DataConfig
 
@@ -107,6 +107,12 @@ def _normalize_preference(record: Dict[str, Any]) -> Dict[str, str]:
     }
 
 
+def _normalize(records: List[Dict[str, Any]], fmt: str) -> List[Dict[str, Any]]:
+    if fmt == "preference":
+        return [_normalize_preference(r) for r in records]
+    return [_to_messages(r, fmt) for r in records]
+
+
 def load_and_prepare(
     cfg: DataConfig, task: str, seed: int = 0
 ) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]], str]:
@@ -131,19 +137,10 @@ def load_and_prepare(
             "Preference data detected — set `task: dpo` (or `task: orpo`) in troy.yaml."
         )
 
-    if fmt == "preference":
-        records = [_normalize_preference(r) for r in records]
-    else:
-        records = [_to_messages(r, fmt) for r in records]
+    records = _normalize(records, fmt)
 
     if cfg.valid:
-        valid = _read_records(Path(cfg.valid).expanduser())
-        valid = (
-            [_normalize_preference(r) for r in valid]
-            if fmt == "preference"
-            else [_to_messages(r, fmt) for r in valid]
-        )
-        return records, valid, fmt
+        return records, _normalize(_read_records(Path(cfg.valid).expanduser()), fmt), fmt
 
     # Split off validation
     rng = random.Random(seed)

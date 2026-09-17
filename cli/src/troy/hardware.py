@@ -27,7 +27,11 @@ class Hardware:
 
     @property
     def is_apple_silicon(self) -> bool:
-        return self.arch == "arm64" and platform.system() == "Darwin"
+        return is_apple_silicon()
+
+
+def is_apple_silicon() -> bool:
+    return platform.system() == "Darwin" and platform.machine() == "arm64"
 
 
 def detect() -> Hardware:

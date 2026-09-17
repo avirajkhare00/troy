@@ -8,14 +8,13 @@ which matters on unified memory.
 from __future__ import annotations
 
 import time
-from typing import Any, Dict, List, Tuple
+from typing import Any, Callable, Dict, List, Tuple
 
 import mlx.core as mx
 import mlx.nn as nn
 import mlx.optimizers as optim
 from mlx.utils import tree_flatten
 from mlx_lm.tuner.trainer import grad_checkpoint
-from mlx_lm.tuner.utils import print_trainable_parameters
 from mlx_lm.utils import load
 
 from .config import TroyConfig
@@ -83,29 +82,34 @@ def _sequence_logps(model, tokens: mx.array, mask: mx.array) -> mx.array:
     return (logps * mask).sum(axis=-1)
 
 
-def run_dpo(
+def train_pairs(
     config: TroyConfig,
     train_records: List[Dict[str, Any]],
-    valid_records: List[Dict[str, Any]],
+    task: str,
+    make_loss: Callable[[Any, Any], Callable],
+    hyper: str,
 ) -> None:
+    """Shared LoRA loop for pairwise preference tasks (DPO, ORPO).
+
+    make_loss(model, tokenizer) returns loss_fn(model, tc, mc, tr, mr) ->
+    (loss, reward_acc); a task may wrap it with a per-batch prologue (see
+    DPO's reference pass) by returning a callable that closes over the batch.
+    """
     mx.random.seed(config.training.seed)
     print(f"Loading {config.base} ...")
     model, tokenizer = load(config.base)
 
     batch_size = resolve_batch_size(config)
-    # DPO runs chosen+rejected per example: halve the auto batch size
     if config.training.batch_size == "auto":
-        batch_size = max(1, batch_size // 2)
+        batch_size = max(1, batch_size // 2)  # chosen + rejected per example
     iters = resolve_iters(config, len(train_records), batch_size)
     num_layers = apply_lora(model, config)
     save_adapter_config(config, num_layers)
     if config.training.grad_checkpoint:
         grad_checkpoint(model.layers[0])
 
-    beta = config.training.dpo.beta
     max_len = config.training.seq_len
     pad_id = tokenizer.pad_token_id or tokenizer.eos_token_id or 0
-
     encoded = [
         (
             _encode_pair(tokenizer, r["prompt"], r["chosen"], max_len),
@@ -114,19 +118,10 @@ def run_dpo(
         for r in train_records
     ]
 
-    def loss_fn(model, tc, mc, tr, mr, ref_c, ref_r):
-        pol_c = _sequence_logps(model, tc, mc)
-        pol_r = _sequence_logps(model, tr, mr)
-        logits = beta * ((pol_c - ref_c) - (pol_r - ref_r))
-        loss = -nn.log_sigmoid(logits).mean()
-        reward_acc = (logits > 0).mean()
-        return loss, reward_acc
-
-    loss_and_grad = nn.value_and_grad(model, loss_fn)
+    step = make_loss(model, tokenizer)
     opt = optim.Adam(learning_rate=config.training.lr)
-
     print(
-        f"Training: task=dpo beta={beta} batch_size={batch_size} iters={iters} "
+        f"Training: task={task} {hyper} batch_size={batch_size} iters={iters} "
         f"lr={config.training.lr} pairs={len(encoded)}"
     )
 
@@ -138,17 +133,10 @@ def run_dpo(
 
     for it in range(iters):
         idx = [(it * batch_size + k) % n for k in range(batch_size)]
-        chosen = [encoded[i][0] for i in idx]
-        rejected = [encoded[i][1] for i in idx]
-        tc, mc = _batch(chosen, pad_id)
-        tr, mr = _batch(rejected, pad_id)
+        tc, mc = _batch([encoded[i][0] for i in idx], pad_id)
+        tr, mr = _batch([encoded[i][1] for i in idx], pad_id)
 
-        with _ReferenceMode(model):
-            ref_c = mx.stop_gradient(_sequence_logps(model, tc, mc))
-            ref_r = mx.stop_gradient(_sequence_logps(model, tr, mr))
-            mx.eval(ref_c, ref_r)
-
-        (loss, acc), grads = loss_and_grad(model, tc, mc, tr, mr, ref_c, ref_r)
+        (loss, acc), grads = step(model, tc, mc, tr, mr)
         opt.update(model, grads)
         mx.eval(model.parameters(), opt.state, loss)
         losses.append(loss.item())
@@ -170,5 +158,28 @@ def run_dpo(
 
 
 def _save(model, adapter_file) -> None:
-    adapter_weights = dict(tree_flatten(model.trainable_parameters()))
-    mx.save_safetensors(str(adapter_file), adapter_weights)
+    mx.save_safetensors(str(adapter_file), dict(tree_flatten(model.trainable_parameters())))
+
+
+def run_dpo(config: TroyConfig, train_records: List[Dict[str, Any]]) -> None:
+    beta = config.training.dpo.beta
+
+    def make_loss(model, tokenizer):
+        def loss_fn(model, tc, mc, tr, mr, ref_c, ref_r):
+            pol_c = _sequence_logps(model, tc, mc)
+            pol_r = _sequence_logps(model, tr, mr)
+            logits = beta * ((pol_c - ref_c) - (pol_r - ref_r))
+            return -nn.log_sigmoid(logits).mean(), (logits > 0).mean()
+
+        loss_and_grad = nn.value_and_grad(model, loss_fn)
+
+        def step(model, tc, mc, tr, mr):
+            with _ReferenceMode(model):
+                ref_c = mx.stop_gradient(_sequence_logps(model, tc, mc))
+                ref_r = mx.stop_gradient(_sequence_logps(model, tr, mr))
+                mx.eval(ref_c, ref_r)
+            return loss_and_grad(model, tc, mc, tr, mr, ref_c, ref_r)
+
+        return step
+
+    train_pairs(config, train_records, "dpo", make_loss, f"beta={beta}")

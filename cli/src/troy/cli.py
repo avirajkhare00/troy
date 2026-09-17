@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import json
 import platform
-import sys
 from pathlib import Path
 from typing import List, Optional
 
@@ -24,7 +23,9 @@ console = Console()
 
 
 def _require_apple_silicon() -> None:
-    if platform.system() != "Darwin" or platform.machine() != "arm64":
+    from .hardware import is_apple_silicon
+
+    if not is_apple_silicon():
         console.print(
             "[red]Troy runs on Apple Silicon Macs only (M1 or later).[/red]\n"
             f"Detected: {platform.system()} / {platform.machine()}"
@@ -73,9 +74,7 @@ def init(
     data_file = data_dir / data_name
     if not data_file.exists():
         data_dir.mkdir(parents=True, exist_ok=True)
-        with open(data_file, "w") as f:
-            for record in sample:
-                f.write(json.dumps(record) + "\n")
+        data_file.write_text("".join(json.dumps(r) + "\n" for r in sample))
         console.print(f"Wrote sample data to [bold]{data_file}[/bold] — replace it with yours.")
 
     console.print(f"Created [bold]{path}[/bold] ({template} template).")
@@ -170,16 +169,34 @@ def train(
     elif cfg.task == "orpo":
         from .train_orpo import run_orpo
 
-        run_orpo(cfg, train_records, valid_records)
+        run_orpo(cfg, train_records)
     else:
         from .train_dpo import run_dpo
 
-        run_dpo(cfg, train_records, valid_records)
+        run_dpo(cfg, train_records)
 
     console.print(
         f"\nTry it: [bold]troy chat[/bold]   |   "
         f"Export it: [bold]troy export[/bold]"
     )
+
+
+
+def _resolve_model(
+    config: Path, model: Optional[str], base_only: bool, verb: str
+) -> tuple[str, Optional[str]]:
+    """(model, adapter) from explicit --model or the config's base + adapter."""
+    if model is not None:
+        return model, None
+    from .config import load_config
+
+    cfg = load_config(config)
+    if base_only:
+        return cfg.base, None
+    if (cfg.adapter_path / "adapters.safetensors").exists():
+        return cfg.base, str(cfg.adapter_path)
+    console.print(f"[yellow]No trained adapter found — {verb} the base model.[/yellow]")
+    return cfg.base, None
 
 
 @app.command()
@@ -222,20 +239,7 @@ def chat(
             console.print(f"[red]{tools} must hold a JSON list of tool schemas.[/red]")
             raise typer.Exit(1)
 
-    adapter: Optional[str] = None
-    if model is None:
-        from .config import load_config
-
-        cfg = load_config(config)
-        model = cfg.base
-        if not base_only:
-            adapter_file = cfg.adapter_path / "adapters.safetensors"
-            if adapter_file.exists():
-                adapter = str(cfg.adapter_path)
-            else:
-                console.print(
-                    "[yellow]No trained adapter found — chatting with the base model.[/yellow]"
-                )
+    model, adapter = _resolve_model(config, model, base_only, "chatting with")
     if image is not None:
         if prompt is None:
             console.print("[red]--image needs a one-shot prompt: -p \"your question\"[/red]")
@@ -263,20 +267,7 @@ def serve(
     _require_apple_silicon()
     from .serve import run_serve
 
-    adapter: Optional[str] = None
-    if model is None:
-        from .config import load_config
-
-        cfg = load_config(config)
-        model = cfg.base
-        if not base_only:
-            adapter_file = cfg.adapter_path / "adapters.safetensors"
-            if adapter_file.exists():
-                adapter = str(cfg.adapter_path)
-            else:
-                console.print(
-                    "[yellow]No trained adapter found — serving the base model.[/yellow]"
-                )
+    model, adapter = _resolve_model(config, model, base_only, "serving")
     run_serve(model, adapter, host, port, max_tokens)
 
 
@@ -393,6 +384,41 @@ def validate(
     raise typer.Exit(1)
 
 
+
+def _check_synth_args(
+    source: Optional[Path], seed: Optional[str], fmt: str,
+    tools: Optional[Path], out: Optional[Path], who: str,
+) -> Path:
+    """Validate the options `data synth` and `mesh serve` share; return the output path."""
+    if source is None and seed is None:
+        console.print(
+            f'[red]Give the {who} something to work from:[/red] '
+            '--from ./docs and/or --seed "task description".'
+        )
+        raise typer.Exit(1)
+    if fmt not in ("chat", "preference", "tools"):
+        console.print("[red]--format must be `chat`, `preference`, or `tools`.[/red]")
+        raise typer.Exit(1)
+    if fmt == "tools":
+        if tools is None or not tools.exists():
+            console.print(
+                "[red]-f tools needs --tools schemas.json[/red] — a JSON list of "
+                "OpenAI-style function specs the assistant can call."
+            )
+            raise typer.Exit(1)
+        if seed is None:
+            console.print(
+                '[red]-f tools needs --seed[/red] — it becomes the system prompt, '
+                'e.g. "travel planning assistant that books nothing".'
+            )
+            raise typer.Exit(1)
+    out = out or Path("data") / ("preferences.jsonl" if fmt == "preference" else "train.jsonl")
+    if out.exists():
+        console.print(f"[red]{out} already exists[/red] — pass -o to write elsewhere.")
+        raise typer.Exit(1)
+    return out
+
+
 @data_app.command()
 def synth(
     source: Optional[Path] = typer.Option(
@@ -426,38 +452,13 @@ def synth(
 ) -> None:
     """Synthesize a training dataset with a local teacher model."""
     _require_apple_silicon()
-    if source is None and seed is None:
-        console.print(
-            '[red]Give the teacher something to work from:[/red] '
-            '--from ./docs and/or --seed "task description".'
-        )
-        raise typer.Exit(1)
-    if fmt not in ("chat", "preference", "tools"):
-        console.print("[red]--format must be `chat`, `preference`, or `tools`.[/red]")
-        raise typer.Exit(1)
-    if fmt == "tools":
-        if tools is None or not tools.exists():
-            console.print(
-                "[red]-f tools needs --tools schemas.json[/red] — a JSON list of "
-                "OpenAI-style function specs the assistant can call."
-            )
-            raise typer.Exit(1)
-        if seed is None:
-            console.print(
-                '[red]-f tools needs --seed[/red] — it becomes the system prompt, '
-                'e.g. "travel planning assistant that books nothing".'
-            )
-            raise typer.Exit(1)
+    out = _check_synth_args(source, seed, fmt, tools, out, "teacher")
 
     from .synth import pick_teacher, run_synth
 
     if teacher == "auto":
         teacher = pick_teacher()
         console.print(f"Teacher: [bold]{teacher}[/bold] (picked for this Mac's memory)")
-    out = out or Path("data") / ("preferences.jsonl" if fmt == "preference" else "train.jsonl")
-    if out.exists():
-        console.print(f"[red]{out} already exists[/red] — pass -o to write elsewhere.")
-        raise typer.Exit(1)
 
     stats = run_synth(
         n=n, out_path=out, fmt=fmt, teacher=teacher,
@@ -532,31 +533,7 @@ def mesh_serve(
     Workers run the teacher model; this machine only mints prompts and
     validates results, so it can be any Mac (the model never loads here).
     """
-    if source is None and seed is None:
-        console.print(
-            '[red]Give the workers something to work from:[/red] '
-            '--from ./docs and/or --seed "task description".'
-        )
-        raise typer.Exit(1)
-    if fmt not in ("chat", "preference", "tools"):
-        console.print("[red]--format must be `chat`, `preference`, or `tools`.[/red]")
-        raise typer.Exit(1)
-    if fmt == "tools":
-        if tools is None or not tools.exists():
-            console.print(
-                "[red]-f tools needs --tools schemas.json[/red] — a JSON list of "
-                "OpenAI-style function specs the assistant can call."
-            )
-            raise typer.Exit(1)
-        if seed is None:
-            console.print(
-                '[red]-f tools needs --seed[/red] — it becomes the system prompt.'
-            )
-            raise typer.Exit(1)
-    out = out or Path("data") / ("preferences.jsonl" if fmt == "preference" else "train.jsonl")
-    if out.exists():
-        console.print(f"[red]{out} already exists[/red] — pass -o to write elsewhere.")
-        raise typer.Exit(1)
+    out = _check_synth_args(source, seed, fmt, tools, out, "workers")
 
     import secrets
 

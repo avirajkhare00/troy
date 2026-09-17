@@ -16,10 +16,11 @@ import json
 import socket
 import threading
 import time
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Tuple
+from urllib.parse import parse_qs
 
 from .synth import SynthSpec, ingest_raw, mint_prompt
 
@@ -226,13 +227,10 @@ class MeshHandler(BaseHTTPRequestHandler):
         if path == "/v1/status":
             return self._send(200, state.snapshot())
         if path == "/v1/work":
-            max_items = 1
-            for part in query.split("&"):
-                if part.startswith("max="):
-                    try:
-                        max_items = max(1, min(int(part[4:]), 8))
-                    except ValueError:
-                        pass
+            try:
+                max_items = max(1, min(int(parse_qs(query).get("max", ["1"])[0]), 8))
+            except ValueError:
+                max_items = 1
             worker = self.headers.get("X-Worker", self.client_address[0])
             items, done = state.lease(worker, max_items)
             return self._send(200, {
